@@ -1,0 +1,21 @@
+##What We’ve Done
+* Downloaded source file, installed SGX and DSK, tried to compile, and found out that there are library issues
+* Contacted the original author to ask for help with the library file issues
+* Found out that the project is no longer supported by original author
+* Started and shared a trello
+* Killed the proposal!!!
+* After a grueling 2-hour meeting where we put aside Netflix, food, bathroom breaks, and all other non-essential bodily functions, we overcame geographic obstacles to create a cohesive group identity, mission statement, and modus operandi.
+  * Name: Dumbledore’s Army
+    * 3 Gryffindors, 2 Hufflepuffs, and 1 ~~Slytherin~~ unknown
+  * Mission Statement: To create a more inclusive and safe world through the expansion of the Fidelius ~~charm~~ system to ~~muggles~~ WindowsOS.
+  * MO: Defense Against the ~~Dark Arts~~ Malicious Agents and Suspicious Malware.
+##What We’ll Do
+* Look into a virtual machine with older versions of C libraries??
+* Edit and resubmit our proposal after Algorithms midterm [no offense]
+* Get Raspberry Pi?
+##Issues
+* Never ending rabbit hole of non-existent library files
+* Certain files don’t have issues with looking at library files while other do with the same library files
+  * Example
+    * Birds.cpp uses include string → fine
+    * Dogs.cpp uses include string → can’t find
