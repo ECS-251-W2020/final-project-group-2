@@ -31,14 +31,14 @@
 
 ######## SGX SDK Settings ########
 
-SGX_SDK ?= /opt/intel/sgxsdk
+SGX_SDK ?= /opt/sgx/sgxsdk
 SGX_MODE ?= HW
 SGX_ARCH ?= x64
 SGX_DEBUG ?= 1
 
 ifeq ($(shell getconf LONG_BIT), 32)
 	SGX_ARCH := x86
-else ifeq ($(findstring -m32, $(CXXFLAGS)), -m32)
+else ifeq ($(findstring -m32, $(FLAGS)), -m32)
 	SGX_ARCH := x86
 endif
 
@@ -78,7 +78,7 @@ else
 endif
 
 App_Cpp_Files := isv_app/isv_app.cpp isv_app/sgx_display/btchannel.cpp isv_app/sgx_keyboard/keyboard_driver.cpp
-App_Include_Paths := -Iservice_provider -I$(SGX_SDK)/include -Iisv_app/sgx_display -Iisv_app/sgx_keyboard
+App_Include_Paths := -Iservice_provider -I$(SGX_SDK)/include -Iisv_app/sgx_display -Iisv_app/sgx_keyboard -I/usr/include/c
 
 App_C_Flags := $(SGX_COMMON_CFLAGS) -fPIC -Wno-attributes $(App_Include_Paths)
 
@@ -130,7 +130,7 @@ endif
 Crypto_Library_Name := sgx_tcrypto
 
 Enclave_Cpp_Files := isv_enclave/isv_enclave.cpp isv_enclave/TinyJS.cpp isv_enclave/TinyJS_Functions.cpp isv_enclave/TinyJS_MathFunctions.cpp isv_enclave/sgx_display/bmp.cpp isv_enclave/sgx_display/sgx_display.cpp
-Enclave_Include_Paths := -I$(SGX_SDK)/include -I$(SGX_SDK)/include/tlibc -I$(SGX_SDK)/include/stlport -Iisv_enclave/
+Enclave_Include_Paths := -I$(SGX_SDK)/include -I$(SGX_SDK)/include/tlibc -I$(SGX_SDK)/include/stlport -Iisv_enclave/ -Iservice_provider -Iisv_app/sgx_display -Iisv_app/sgx_keyboard -I/usr/include/c++/7.4.0 -I/usr/include/c
 
 Enclave_C_Flags := $(SGX_COMMON_CFLAGS) -nostdinc -fvisibility=hidden -fpie -fstack-protector $(Enclave_Include_Paths)
 Enclave_Cpp_Flags := $(Enclave_C_Flags) -std=c++11 -nostdinc++
