@@ -6,6 +6,8 @@
   "background" : {
     "scripts" : ["background.js"]
   },
+  "icons": {
+           "128": "symbol.png" },
   "browser_action": {},
   "permissions": [
     "nativeMessaging",
