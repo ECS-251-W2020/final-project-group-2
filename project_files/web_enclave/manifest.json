@@ -4,7 +4,7 @@
   "manifest_version" : 2,
   "description": "Analyzes a web page's script and form tags, then writes them to a file",
   "background" : {
-    "scripts" : ["background.js"]
+    "scripts" : ["background.js", "foo.js"]
   },
   "icons": {
            "128": "symbol.png" },
