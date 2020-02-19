@@ -9,6 +9,11 @@
   "icons": {
            "128": "symbol.png" },
   "browser_action": {},
+  "app": {
+    "launch": {
+      "local_path": "background.html"
+    }
+  },
   "permissions": [
     "nativeMessaging",
     "activeTab",

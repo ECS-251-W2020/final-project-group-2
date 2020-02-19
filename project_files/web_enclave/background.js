@@ -1,9 +1,11 @@
 console.log("HI THIS IS WORKIGN???2");
-
+//alert('here');
 var nativePort = chrome.runtime.connectNative("com.google.chrome.fidelius.echo");
+console.log(nativePort);
 var numEMs = 0;
-//nativePort.postMessage("2" + '\n' + "origin" + '\n');
+nativePort.postMessage("2" + '\n' + "origin" + '\n');
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  console.log('in here');
   nativePort.postMessage("6" + '\n' + "origin" + '\n');
   console.log("HI THIS IS WORKIGN???");
   if (changeInfo.status == "complete" && tab.active) {
@@ -52,3 +54,5 @@ function start() {
     file: "htmlParser.js"
   });
 }
+
+//alert('down here');
