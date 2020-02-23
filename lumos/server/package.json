@@ -1,0 +1,29 @@
+{
+  "name": "lumos",
+  "version": "1.0.0",
+  "description": "Server application for Lumos project",
+  "main": "app.js",
+  "scripts": {
+    "test": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ECS-251-W2020/final-project-group-2.git"
+  },
+  "keywords": [
+    "lumos",
+    "fidelius"
+  ],
+  "author": "DA",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ECS-251-W2020/final-project-group-2/issues"
+  },
+  "homepage": "https://github.com/ECS-251-W2020/final-project-group-2#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
