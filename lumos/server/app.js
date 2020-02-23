@@ -14,7 +14,9 @@ http.listen(3000, function () {
 io.on('connection', function (socket) {
     console.log('Connected');
     socket.on('click', function(msg) {
-
+        launch.launch(msg, function(cookies) {
+            socket.emit('login', cookies);
+        });
     })
 });
 
