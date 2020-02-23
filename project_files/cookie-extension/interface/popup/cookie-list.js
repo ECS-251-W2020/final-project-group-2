@@ -181,24 +181,24 @@
       });
     }
 
-    document.getElementById('create-cookie').addEventListener('click', () => {
-      if (disableButtons) {
-        return;
-      }
-
-      setPageTitle('Cookie Editor - Create a Cookie');
-
-      disableButtons = true;
-
-      Animate.transitionPage(containerCookie, containerCookie.firstChild, createHtmlFormCookie(), 'left', () => {
-        disableButtons = false;
-      });
-
-
-      document.getElementById('button-bar-default').classList.remove('active');
-      document.getElementById('button-bar-add').classList.add('active');
-      return false;
-    });
+    // document.getElementById('create-cookie').addEventListener('click', () => {
+    //   if (disableButtons) {
+    //     return;
+    //   }
+    //
+    //   setPageTitle('Cookie Editor - Create a Cookie');
+    //
+    //   disableButtons = true;
+    //
+    //   Animate.transitionPage(containerCookie, containerCookie.firstChild, createHtmlFormCookie(), 'left', () => {
+    //     disableButtons = false;
+    //   });
+    //
+    //
+    //   document.getElementById('button-bar-default').classList.remove('active');
+    //   document.getElementById('button-bar-add').classList.add('active');
+    //   return false;
+    // });
 
     // document.getElementById('delete-all-cookies').addEventListener('click', () => {
     //   let buttonIcon = document.getElementById('delete-all-cookies').querySelector('use');
