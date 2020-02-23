@@ -25,12 +25,12 @@ async function launch(address, callback) {
   await page.goto(address);
 
 
-  // Click on login button and wait for the page to load
-  const waitForLoad = new Promise(resolve => page.on('load', () => resolve()));
-  await page.evaluate(() => {
-    document.getElementById('signInBtn').click();
-  });
-  await waitForLoad;
+//   // Click on login button and wait for the page to load
+//   const waitForLoad = new Promise(resolve => page.on('load', () => resolve()));
+//   await page.evaluate(() => {
+//     document.getElementById('signInBtn').click();
+//   });
+//   await waitForLoad;
 
   // Create cookies
   let cookies = null;
@@ -43,5 +43,10 @@ async function launch(address, callback) {
 //   await browser.close();
 }
 
+function cookies() {
+    console.log("Create Cookies");
+}
+
 
 module.exports.launch = launch;
+
