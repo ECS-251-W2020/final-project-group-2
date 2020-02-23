@@ -4,14 +4,15 @@
   "manifest_version": 2,
   "name": "Bank of America Hack",
   "version": "1.6.10",
+  "homepage_url": "https://www.tannr.com",
   "description":
     "Significantly improves YouTube comments by replacing them with random herps and derps.",
   "content_scripts": [
     {
-      "run_at": "document_end",
+      "run_at": "document_idle",
       "all_frames": true,
-      "matches": ["*://*/*"],
-      "js": ["content.js"]
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["main.js"]
     }
   ]
 }
