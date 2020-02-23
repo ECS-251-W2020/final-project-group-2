@@ -241,12 +241,12 @@
     });
 
     document.getElementById('import-cookies').addEventListener('click', () => {
-      // if (loadedCookies && Object.keys(loadedCookies).length) {
-      //   for (var cookieId in loadedCookies) {
-      //     removeCookie(loadedCookies[cookieId].cookie.name);
-      //   }
-      // }
-      // sendNotification('All cookies were deleted');
+      if (loadedCookies && Object.keys(loadedCookies).length) {
+        for (var cookieId in loadedCookies) {
+          removeCookie(loadedCookies[cookieId].cookie.name);
+        }
+      }
+      sendNotification('All cookies were deleted');
 
       //Hard refresh after we delete cookies
       chrome.tabs.query({
@@ -272,8 +272,6 @@
       document.getElementById('button-bar-default').classList.remove('active');
       document.getElementById('button-bar-import').classList.add('active');
 
-<<<<<<< HEAD
-=======
       //Hard refresh after we delete cookies
       chrome.tabs.query({
         active: true,
@@ -284,7 +282,6 @@
         });
       });
 
->>>>>>> 79470ec6ac0cd09cad0287eb1f9d39e4f176cb85
       return false;
     });
 
