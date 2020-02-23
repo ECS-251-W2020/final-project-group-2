@@ -1,0 +1,291 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this file,
+   - You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<!DOCTYPE html>
+<html><head>
+  <meta http-equiv="Content-Security-Policy" content="default-src chrome:; img-src data: *; media-src *; object-src 'none'">
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <meta name="viewport" content="width=device-width; user-scalable=0">
+  <link rel="stylesheet" href="chrome://global/skin/aboutReader.css" type="text/css">
+  <script src="chrome://global/content/reader/aboutReader.js"></script>
+<link rel="stylesheet" href="chrome://global/skin/narrate.css"><title>Emulating a Bluetooth Keyboard with a Raspberry Pi and Python (Raspbian Jessie/Bluez 5 version)</title><link rel="shortcut icon" href="http://yetanotherpointlesstechblog.blogspot.com/favicon.ico"></head>
+
+<body class="light sans-serif loaded">
+  <div class="container content-width3" style="--font-size:20px;">
+    <div class="header reader-header reader-show-element" dir="ltr">
+      <a class="domain reader-domain" href="http://yetanotherpointlesstechblog.blogspot.com/2016/04/emulating-bluetooth-keyboard-with.html">yetanotherpointlesstechblog.blogspot.com</a>
+      <div class="domain-border"></div>
+      <h1 class="reader-title">Emulating a Bluetooth Keyboard with a Raspberry Pi and Python (Raspbian Jessie/Bluez 5 version)</h1>
+      <div class="credits reader-credits"></div>
+      <div class="meta-data">
+        <div class="reader-estimated-time" dir="ltr" style="text-align: left;">8-10 minutes</div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="content">
+      <div class="moz-reader-content line-height4 reader-show-element" dir="ltr"><div id="readability-page-1" class="page"><div id="post-body-957283128921502353" itemprop="description articleBody">
+<p>
+A while ago I followed this <a href="http://www.linuxuser.co.uk/tutorials/emulate-a-bluetooth-keyboard-with-the-raspberry-pi">article</a>&nbsp;&nbsp;to turn a Raspberry Pi into a Bluetooth HID Keyboard emulator.</p><p>
+
+I recently tried to repeat this process on &nbsp;Raspbian Jessie and I 
+found that I was unable to get it to work. &nbsp;After a bit of research
+ I discovered that Jessie includes an upgraded version of Bluez, the 
+Linux Bluetooth stack, and that a lot of the instructions in the article
+ were no longer valid. </p><p>
+
+&nbsp;Here is my attempt to create an updated version of the emulator that will work with Bluez5 and Jessie.</p><p>
+
+<i>(All credit to the original author of the Linux User Magazine 
+article; I wouldn't have managed to get to the first step without 
+following their instructions.)</i></p><p>
+
+Bluez 5 has substantially changed how the bluetooth daemon is 
+configured, how SDP profiles are advertised and how Bluetooth pairing 
+occurs. Therefore there are quite a few changes that need to be made to 
+the process given in the original article and to the scripts.</p><p>
+
+I've also taken the liberty of introducing my own changes to the scripts
+ to allow a more generic use than a simple keyboard forwarder - I've 
+turned the Bluetooth keyboard emulation script into a DBUS service that 
+will forward any keys it receives to the Bluetooth host. This simplifies
+ the development of multiple clients of different types.</p><p>
+
+
+Here are the steps to get things up and running</p><h4>
+Set up Raspberry Pi</h4><p>
+Obtain a Pi running Raspbian Jessie. Ensure the Pi is running the latest version.</p><p>
+
+<span>&gt;sudo apt-get update</span><br>
+<span>&gt;sudo apt-get upgrade</span></p><h4>
+Install Bluetooth</h4><p>
+This step is the same process as for Step 03 of the original article.</p><p>
+
+<span>&gt; sudo apt-get install python-gobject bluez bluez-tools bluez-firmware python-bluez python-dev python-pip </span><br>
+<span>&gt; sudo pip install evdev</span></p>
+<h4>
+Bluetooth Daemon Configuration</h4><p>
+This is where things start to diverge. Bluez 5 uses a different 
+mechanism than Bluez 4 to configure plug-ins and SDP profiles. &nbsp;It 
+is no longer possible to disable plug-ins using /etc/bluetooth/main.conf</p><p>
+
+Instead, I found that the easiest thing to do was to kill the bluetooth daemon and run it in the foreground</p><p>
+
+&nbsp;- Stop the background process</p><p>
+
+<span>&gt; sudo /etc/init.d/bluetooth stop</span></p><p>
+
+&nbsp;- Open a dedicated terminal and tun the bluetooth daemon in the foreground</p><p>
+
+<span>&gt; sudo /usr/sbin/bluetoothd --nodetach --debug -p time</span></p><p>
+
+
+<i>Note; This will disable all bluetooth plug-ins except the time 
+plug-in. &nbsp;I found this the easiest way to ensure that plug-ins were
+ not interfering with the keyboard emulator. An improvement would be to 
+identify and disable only the plug-ins that would conflict with the 
+emulator code.</i></p><h4>
+Download the code</h4><p>
+Clone the yaptb git reposutory</p><p>
+
+<span>&gt; git clone&nbsp;https://github.com/yaptb/BlogCode.git</span></p><p>
+
+
+The code for the bluetooth keyboard emulator in is in the <span>/btkkeyboard</span> &nbsp;directory. There are three subfolders</p><p>
+
+<span>server</span> - contains the &nbsp;bluetooth keyboard emulator code<br>
+<span>dbus</span> - contains a DBUS system bus configuration for the btkserver<br>
+<span>keyboard</span> - contains a btkserver client application that sends local keystrokes to the emulator</p><h4>
+Configure DBUS</h4><p>
+My reworked version of the keyboard emulator sets itself up as a DBUS 
+system bus server. &nbsp;This allows client applications to use DBUS to 
+send keystrokes to the emulator and allows the simple creation of 
+multiple different types of clients.</p><p>
+
+For this to work, the DBUS system bus needs to be configured to add the 
+btkserver API. &nbsp;This is enabled by copying a configuration file 
+into the /etc/dbus-1/system.d folder</p><p>
+
+<span>&gt; cd BlogCode/btkeyboard/dbus</span><br>
+<span>&gt; sudo cp org.yaptb.btkkbservice.conf /etc/dbus-1/system.d</span></p>
+<h4>
+hciconfig</h4>
+<p>
+Depending on your system, you may need to manually enable your bluetooth
+ device. &nbsp;The hciconfig utility can be used to control the 
+bluetooth adapter.</p><p>
+
+<span>&nbsp; &gt;sudo hciconfig hcio</span></p><p>
+
+&nbsp;should list the status of your bluetooth adapter. If the status is
+ UP and RUNNING then all is well, otherwise run the following command to
+ enable it</p><p>
+
+<span>&nbsp;&gt; sudo hciconfig hcio up</span><br>
+<span><br></span></p>
+<p><a href="https://2.bp.blogspot.com/-LdpJh2TL0cc/WCso9NTvAFI/AAAAAAAAAIE/QiIRTXtOX9kYw27Y7F2kqbFcQ5_8eQO9QCLcB/s1600/hci_config_1.png"><img src="Emulating%20a%20Bluetooth%20Keyboard%20with%20a%20Raspberry%20Pi%20and%20Python%20(Raspbian%20Jessie_Bluez%205%20version)_files/hci_config_1.png"></a></p>
+<br>
+<h4>
+Edit the Emulator Server Code</h4><p>
+The emulator server code (<span>btkserver.py</span>) needs to be updated
+ with the Bluetooth Device address of your bluetooth adapter before it 
+will work. &nbsp;First, use hciconfig to find the address:</p><p>
+
+<span>&gt;sudo hciconfig hcio</span><br>
+<span><br></span></p><p><a href="https://1.bp.blogspot.com/-UUH9s-RftMo/WCso9EGpc9I/AAAAAAAAAII/M-2MkpYglcks3cIKpWAPXkcTM1K0p5WZwCEw/s1600/hciconfig_bdaddr.png"><img src="Emulating%20a%20Bluetooth%20Keyboard%20with%20a%20Raspberry%20Pi%20and%20Python%20(Raspbian%20Jessie_Bluez%205%20version)_files/hciconfig_bdaddr.png"></a></p>
+<p>
+Then, use a text editor to edit the code and update the constant MY_ADDRESS in <span>btk_server.py</span><br>
+<span> </span><span>&gt; cd BlogCode/btkeyboard/server<br>&gt; leafpad btk_server.py &amp;</span><span> </span>Change the value of the constant MY_ADDRESS to be the same as the value returned from <span>hciconfig </span>and save the file.</p>
+<p><a href="https://4.bp.blogspot.com/-G8vZXTeGOMM/WCsoiuoAYJI/AAAAAAAAAIA/EZ1edb6IzAEPZRIyCm4g5QIouBxCK8KHgCEw/s1600/leafpad_my_address.png"><img src="Emulating%20a%20Bluetooth%20Keyboard%20with%20a%20Raspberry%20Pi%20and%20Python%20(Raspbian%20Jessie_Bluez%205%20version)_files/leafpad_my_address.png" width="640" height="196"></a></p>
+
+
+<h4>
+Run Emulator Server</h4><p>
+The bluetooth emulator is a python script that is a modfied version of 
+the one in the original article. &nbsp;The main changes I have made are 
+to adapt to the Bluez5 profile mechanism for advertising the SDP record 
+and to set up a DBUS api for interacting with the emulated keyboard. 
+&nbsp;I've also tweaked the SDP record a little.</p><p>
+
+Because the script interacts with the system DBUS, it needs to be run as root.</p><p>
+
+<span>&gt; cd BlogCode/btkeyboard/server</span><br>
+<span>&gt; sudo python btkserver.py</span></p><p>
+
+(Remember to have the bluetooth deamon running in a separate terminal window before doing this)</p><p>
+
+If all goes well, you should see something like the following:</p><p><a href="https://3.bp.blogspot.com/-q8gJL_ztwko/VxMGs3FQWAI/AAAAAAAAAGc/DLmbkm4vRzw_nG_WvUPAKBwiOOQ_kBduwCLcB/s1600/btk_server_waiting.png"><img src="Emulating%20a%20Bluetooth%20Keyboard%20with%20a%20Raspberry%20Pi%20and%20Python%20(Raspbian%20Jessie_Bluez%205%20version)_files/btk_server_waiting.png" width="640" height="163"></a></p>
+<h4>
+Pairing</h4>
+<p>
+Before the keyboard can talk to a host, it needs to be paired. 
+&nbsp;This can be tricky and I've spent a lot of time trying to get this
+ to work smoothly. &nbsp;Through trial and error, here is the process I 
+use (I am going to assume you are pairing with a Windows 10 host here)</p><p>
+
+1. Open (yet another) dedicated terminal window and run the <span>bluetoothctl</span>&nbsp;utility,</p><p>
+
+<span>&gt; sudo /usr/bin/bluetoothctl</span></p><p>
+
+2. Type the following commands, pressing enter after each</p><p>
+
+<span>&gt; agent on</span><br>
+<span>&gt; default-agent</span><br>
+<span>&gt; scan on</span><br>
+<span>&gt; discoverable on</span></p><p>
+
+<i>(I am guessing that this puts the bluetooth device in page scan mode 
+and sets up an agent for pairing. Probably time to RTFM to be honest).</i><br>
+<i><br></i>
+You should see something like this:</p><p><a href="https://2.bp.blogspot.com/-T6Qu8MrGtcc/VxMIwlXHU4I/AAAAAAAAAGo/98H3MwtWH4QGCNVubR-ehGUmAnYHjVZhQCLcB/s1600/btk_server_pi_pairing.png"><img src="Emulating%20a%20Bluetooth%20Keyboard%20with%20a%20Raspberry%20Pi%20and%20Python%20(Raspbian%20Jessie_Bluez%205%20version)_files/btk_server_pi_pairing.png" width="640" height="218"></a></p>
+<p>
+
+3. Go to your host machine and look at the Bluetooth Settings. On Windows 10 this is achieved by</p><p>
+
+<span>Start Menu -&gt; Settings -&gt; Devices -&gt; Bluetooth</span></p><p>
+
+If all is going well, you should see the Raspberry Pi keyboard ready to pair:</p><p><a href="https://4.bp.blogspot.com/-6hFtr6_aRMo/VxMJnME-IuI/AAAAAAAAAGw/lrdrhI_moocvxXNJehFnMtTxbgEQUnF0gCLcB/s1600/btk_server_win10_pairing.png"><img src="Emulating%20a%20Bluetooth%20Keyboard%20with%20a%20Raspberry%20Pi%20and%20Python%20(Raspbian%20Jessie_Bluez%205%20version)_files/btk_server_win10_pairing.png" width="320" height="194"></a></p>
+<p>
+
+Click the device and select pair. &nbsp;You will see a dialog with a passcode. Don't click anything yet.</p><p><a href="https://4.bp.blogspot.com/-Y8A6tZP9T80/VxMMxNXQG8I/AAAAAAAAAG8/gPIGLvlCooYuJGC4Vp_HW5yUFpF9sEc3gCLcB/s1600/btk_server_windows_pairing2.png"><img src="Emulating%20a%20Bluetooth%20Keyboard%20with%20a%20Raspberry%20Pi%20and%20Python%20(Raspbian%20Jessie_Bluez%205%20version)_files/btk_server_windows_pairing2.png" width="320" height="174"></a></p>
+<p>
+
+3. Go back to the bluetoothctl window on the Pi and wait a few seconds, 
+&nbsp;You should then be prompted to accept or reject the pairing 
+request from the host:</p><p><a href="https://3.bp.blogspot.com/-ZeBivmFh1fw/VxMM2ocvAgI/AAAAAAAAAHA/4C3LzjmsxjQ-VdxcDv5RLg_JGkX4ws9xQCLcB/s1600/btk_server_pi_pairing2.png"><img src="Emulating%20a%20Bluetooth%20Keyboard%20with%20a%20Raspberry%20Pi%20and%20Python%20(Raspbian%20Jessie_Bluez%205%20version)_files/btk_server_pi_pairing2.png" width="640" height="206"></a></p>
+<p>
+
+
+Type <span>yes</span></p><p>
+
+
+4. Quickly go back to the Windows host and click OK. &nbsp;If everything
+ has worked the keyboard should pair and Windows will start installing a
+ keyboard driver for the emulator. &nbsp;You should also see a 
+connection message in the btkserver window.</p><p><a href="https://2.bp.blogspot.com/--JPAmuyncg4/VxMNFjy4v_I/AAAAAAAAAHE/w5kT9K5nOsA-TCxf1GVhVJ8oXkfjwiAAgCLcB/s1600/btk_server_pi_pairing_success.png"><img src="Emulating%20a%20Bluetooth%20Keyboard%20with%20a%20Raspberry%20Pi%20and%20Python%20(Raspbian%20Jessie_Bluez%205%20version)_files/btk_server_pi_pairing_success.png" width="640" height="210"></a></p>
+<p>
+
+If you get this fair your keyboard emulator is set up and ready to use!</p><p>
+
+
+<i>Note: The latest version of rasbian Jessie includes a Bluetooth 
+widget on the desktop. &nbsp;This widget will attempt to 'hijack' the 
+pairing process and will prompt you to complete &nbsp;process through a 
+dialog window. &nbsp;Ignoring this message and using the process above 
+seems to work. Once you have paired through the command line you can 
+safely close this window.</i></p><h4>
+Local Keyboard Mirroring</h4>
+<p>
+The code in the original article mirrored the local Pi keyboard events 
+to the emulator. &nbsp;I've adapted this code and used it to create a 
+client for the btkserver to do the same thing.</p><p>
+
+After setting up the emulator, open another terminal window (that makes 4) and run the keyboard mirroring client</p><p>
+
+<span>&gt; cd BlogCode/btkeyboard/keyboard</span><br>
+<span>&gt; sudo python kb_client.py</span></p><p><a href="https://2.bp.blogspot.com/-8C6oT_YdtHk/VxMQS7IYRXI/AAAAAAAAAHU/KCJrESEKfuEKdWwiTylN0ac6QWCqgHziACLcB/s1600/btk_server_pi_keyboard.png"><img src="Emulating%20a%20Bluetooth%20Keyboard%20with%20a%20Raspberry%20Pi%20and%20Python%20(Raspbian%20Jessie_Bluez%205%20version)_files/btk_server_pi_keyboard.png" width="640" height="140"></a></p>
+<p>
+
+After running this program, any keys typed on the Pi should be mirrored to the Windows host:</p><p><a href="https://2.bp.blogspot.com/-pBO_5_nMgrs/VxMQkIvPaKI/AAAAAAAAAHY/REa4kSWszkYzI560IGUFCmvXSLWmkg6-ACLcB/s1600/btk_server_win10_success.png"><img src="Emulating%20a%20Bluetooth%20Keyboard%20with%20a%20Raspberry%20Pi%20and%20Python%20(Raspbian%20Jessie_Bluez%205%20version)_files/btk_server_win10_success.png" width="320" height="137"></a></p>
+<h4>
+Timeouts and Disconnects</h4><p>
+So far this works well, but the Windows Host seems to disconnect the 
+keyboard after a period of inactivity, &nbsp;Unfortunately this means 
+that you often need to restart the emulator and remove and re-add and 
+re-pair the device in Windows to get it to reconnect.</p><p>
+
+I am still working through this issue, &nbsp;but things seem to improve 
+if you switch the Raspberry Pi bluetooth device to local master mode. </p><p>
+
+<span>&gt; sudo hciconfig hcio lm master</span></p><p>
+
+Your mileage may vary on this. &nbsp;Hopefully someone let me know how 
+to fix this issue. I'll post a follow up if I work it out.</p><h3>
+Update</h3>
+<p>
+I have written a <a href="http://yetanotherpointlesstechblog.blogspot.com.au/2016/11/gpio-client-for-raspberry-pi-bluetooth.html">follow-up</a> to this post showing how to control the keyboard emulator from the Raspberry Pi GPIO bus &nbsp;
+</p>
+</div></div></div>
+    </div>
+
+    <div>
+      <div class="reader-message"></div>
+    </div>
+  </div>
+
+  <ul class="toolbar reader-toolbar">
+    <li><button class="button close-button" title="Close Reader View"></button></li>
+    <ul class="dropdown style-dropdown">
+      <li><button class="dropdown-toggle button style-button" title="Type controls"></button></li>
+      <li class="dropdown-popup" style="top: 48px;">
+        <div class="font-type-buttons"><button class="sans-serif-button selected"><div class="name">Aa</div><div class="description">Sans-serif</div></button><button class="serif-button"><div class="name">Aa</div><div class="description">Serif</div></button></div>
+        <hr>
+        <div class="font-size-buttons">
+          <button class="minus-button" title="Decrease Font Size">
+          </button><button class="font-size-sample">Aa</button><button class="plus-button" title="Increase Font Size">
+        </button></div>
+        <hr>
+        <div class="content-width-buttons">
+          <button class="content-width-minus-button" title="Decrease Content Width">
+          </button><button class="content-width-plus-button" title="Increase Content Width">
+        </button></div>
+        <hr>
+        <div class="line-height-buttons">
+          <button class="line-height-minus-button" title="Decrease Line Height">
+          </button><button class="line-height-plus-button" title="Increase Line Height">
+        </button></div>
+        <hr>
+        <div class="color-scheme-buttons"><button class="light-button selected" title="Color Scheme Light"><div class="name">Light</div></button><button class="dark-button" title="Color Scheme Dark"><div class="name">Dark</div></button><button class="sepia-button" title="Color Scheme Sepia"><div class="name">Sepia</div></button></div>
+        <div class="dropdown-arrow">
+      </div></li>
+    </ul>
+  <ul class="dropdown narrate-dropdown"><li><button class="dropdown-toggle button narrate-toggle" title="Narrate"></button></li><li class="dropdown-popup"><div class="narrate-row narrate-control"><button class="narrate-skip-previous" disabled="disabled" title="Back"></button><button class="narrate-start-stop" title="Start"></button><button class="narrate-skip-next" disabled="disabled" title="Forward"></button></div><div class="narrate-row narrate-rate"><input class="narrate-rate-input" value="0" step="5" max="100" min="-100" type="range" title="Speed"></div><div class="narrate-row narrate-voices"><div class="voiceselect voice-select"><button class="select-toggle" aria-controls="voice-options">
+      <span class="label">Voice:</span> <span class="current-voice">Default</span>
+    </button>
+    <div class="options" id="voice-options" role="listbox"><button data-value="automatic" class="option selected" tabindex="-1" role="option" aria-selected="true">Default</button><button data-value="urn:moz-tts:sapi:Microsoft David Desktop - English (United States)?en-US" class="option" tabindex="-1" role="option">Microsoft David Desktop - English (United States)</button><button data-value="urn:moz-tts:sapi:Microsoft Zira Desktop - English (United States)?en-US" class="option" tabindex="-1" role="option">Microsoft Zira Desktop - English (United States)</button></div></div></div><div class="dropdown-arrow"></div></li></ul><button data-buttonid="pocket-button" class="button pocket-button" style="background-image: url(&quot;chrome://pocket/content/panels/img/pocket-outline.svg&quot;); background-size: 20px 20px;" title="Save to Pocket"></button></ul>
+
+
+
+
+</body></html>
