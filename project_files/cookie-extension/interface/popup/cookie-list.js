@@ -271,17 +271,6 @@
 
       document.getElementById('button-bar-default').classList.remove('active');
       document.getElementById('button-bar-import').classList.add('active');
-
-      //Hard refresh after we delete cookies
-      chrome.tabs.query({
-        active: true,
-        currentWindow: true
-      }, function(tabs) {
-        chrome.tabs.update(cookieHandler.currentTab.id, {
-          url: cookieHandler.currentTab.url
-        });
-      });
-
       return false;
     });
 
@@ -350,6 +339,17 @@
 
       sendNotification('Cookies were created');
       showCookiesForTab();
+
+      //Hard refresh after we delete cookies
+      chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      }, function(tabs) {
+        chrome.tabs.update(cookieHandler.currentTab.id, {
+          url: cookieHandler.currentTab.url
+        });
+      });
+
     });
 
     document.querySelector('#advanced-toggle-all input').addEventListener('change', function() {
