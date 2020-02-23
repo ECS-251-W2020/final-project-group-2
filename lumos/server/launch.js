@@ -7,7 +7,7 @@
 // Need to grab the URL and sign-in button
 // const puppeteer = require('puppeteer');
 const child_process = require('child_process');
-// launch("https://www.google.com").then(() => console.log('Done')).catch(error => console.log(error));
+launch("https://www.google.com").then(() => console.log('Done')).catch(error => console.log(error));
 
 // async function launch(address, callback) {
 //   // Create a new browser. By default, the browser is headless,
