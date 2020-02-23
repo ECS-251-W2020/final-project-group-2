@@ -248,6 +248,16 @@
       // }
       // sendNotification('All cookies were deleted');
 
+      //Hard refresh after we delete cookies
+      chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      }, function(tabs) {
+        chrome.tabs.update(cookieHandler.currentTab.id, {
+          url: cookieHandler.currentTab.url
+        });
+      });
+
       if (disableButtons) {
         return;
       }
@@ -262,6 +272,19 @@
       document.getElementById('button-bar-default').classList.remove('active');
       document.getElementById('button-bar-import').classList.add('active');
 
+<<<<<<< HEAD
+=======
+      //Hard refresh after we delete cookies
+      chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      }, function(tabs) {
+        chrome.tabs.update(cookieHandler.currentTab.id, {
+          url: cookieHandler.currentTab.url
+        });
+      });
+
+>>>>>>> 79470ec6ac0cd09cad0287eb1f9d39e4f176cb85
       return false;
     });
 
@@ -393,6 +416,7 @@
     }
 
     const domain = getDomainFromUrl(cookieHandler.currentTab.url);
+    // console.log(domain);
     const subtitleLine = document.querySelector('.titles h2');
     if (subtitleLine) {
       subtitleLine.textContent = domain || cookieHandler.currentTab.url;
