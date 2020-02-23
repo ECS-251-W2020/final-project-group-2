@@ -241,12 +241,12 @@
     });
 
     document.getElementById('import-cookies').addEventListener('click', () => {
-      if (loadedCookies && Object.keys(loadedCookies).length) {
-        for (var cookieId in loadedCookies) {
-          removeCookie(loadedCookies[cookieId].cookie.name);
-        }
-      }
-      sendNotification('All cookies were deleted');
+      // if (loadedCookies && Object.keys(loadedCookies).length) {
+      //   for (var cookieId in loadedCookies) {
+      //     removeCookie(loadedCookies[cookieId].cookie.name);
+      //   }
+      // }
+      // sendNotification('All cookies were deleted');
 
       if (disableButtons) {
         return;
@@ -261,6 +261,7 @@
 
       document.getElementById('button-bar-default').classList.remove('active');
       document.getElementById('button-bar-import').classList.add('active');
+
       return false;
     });
 
