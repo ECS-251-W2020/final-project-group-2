@@ -218,6 +218,9 @@
     // });
 
     document.getElementById('export-cookies').addEventListener('click', () => {
+
+      let tabUrl = cookieHandler.currentTab.url;
+      console.log(tabUrl);
       let buttonIcon = document.getElementById('export-cookies').querySelector('use');
       if (buttonIcon.getAttribute("xlink:href") === "../sprites/solid.svg#check") {
         return;
@@ -233,11 +236,12 @@
       }
 
       copyText(JSON.stringify(exportedCookies, null, 4));
-
       sendNotification('Cookies exported to clipboard');
+
       setTimeout(() => {
         buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
       }, 1500);
+
     });
 
     document.getElementById('import-cookies').addEventListener('click', () => {
@@ -248,15 +252,15 @@
       }
       sendNotification('All cookies were deleted');
 
-      //Hard refresh after we delete cookies
-      chrome.tabs.query({
-        active: true,
-        currentWindow: true
-      }, function(tabs) {
-        chrome.tabs.update(cookieHandler.currentTab.id, {
-          url: cookieHandler.currentTab.url
-        });
-      });
+      // //Hard refresh after we delete cookies
+      // chrome.tabs.query({
+      //   active: true,
+      //   currentWindow: true
+      // }, function(tabs) {
+      //   chrome.tabs.update(cookieHandler.currentTab.id, {
+      //     url: cookieHandler.currentTab.url
+      //   });
+      // });
 
       if (disableButtons) {
         return;
@@ -340,15 +344,15 @@
       sendNotification('Cookies were created');
       showCookiesForTab();
 
-      //Hard refresh after we delete cookies
-      chrome.tabs.query({
-        active: true,
-        currentWindow: true
-      }, function(tabs) {
-        chrome.tabs.update(cookieHandler.currentTab.id, {
-          url: cookieHandler.currentTab.url
-        });
-      });
+      // //Hard refresh after we delete cookies
+      // chrome.tabs.query({
+      //   active: true,
+      //   currentWindow: true
+      // }, function(tabs) {
+      //   chrome.tabs.update(cookieHandler.currentTab.id, {
+      //     url: cookieHandler.currentTab.url
+      //   });
+      // });
 
     });
 
