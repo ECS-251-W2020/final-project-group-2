@@ -181,24 +181,24 @@
       });
     }
 
-    document.getElementById('create-cookie').addEventListener('click', () => {
-      if (disableButtons) {
-        return;
-      }
-
-      setPageTitle('Cookie Editor - Create a Cookie');
-
-      disableButtons = true;
-
-      Animate.transitionPage(containerCookie, containerCookie.firstChild, createHtmlFormCookie(), 'left', () => {
-        disableButtons = false;
-      });
-
-
-      document.getElementById('button-bar-default').classList.remove('active');
-      document.getElementById('button-bar-add').classList.add('active');
-      return false;
-    });
+    // document.getElementById('create-cookie').addEventListener('click', () => {
+    //   if (disableButtons) {
+    //     return;
+    //   }
+    //
+    //   setPageTitle('Cookie Editor - Create a Cookie');
+    //
+    //   disableButtons = true;
+    //
+    //   Animate.transitionPage(containerCookie, containerCookie.firstChild, createHtmlFormCookie(), 'left', () => {
+    //     disableButtons = false;
+    //   });
+    //
+    //
+    //   document.getElementById('button-bar-default').classList.remove('active');
+    //   document.getElementById('button-bar-add').classList.add('active');
+    //   return false;
+    // });
 
     // document.getElementById('delete-all-cookies').addEventListener('click', () => {
     //   let buttonIcon = document.getElementById('delete-all-cookies').querySelector('use');
@@ -247,6 +247,16 @@
         }
       }
       sendNotification('All cookies were deleted');
+
+      //Hard refresh after we delete cookies
+      chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      }, function(tabs) {
+        chrome.tabs.update(cookieHandler.currentTab.id, {
+          url: cookieHandler.currentTab.url
+        });
+      });
 
       if (disableButtons) {
         return;
@@ -329,6 +339,17 @@
 
       sendNotification('Cookies were created');
       showCookiesForTab();
+
+      //Hard refresh after we delete cookies
+      chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      }, function(tabs) {
+        chrome.tabs.update(cookieHandler.currentTab.id, {
+          url: cookieHandler.currentTab.url
+        });
+      });
+
     });
 
     document.querySelector('#advanced-toggle-all input').addEventListener('change', function() {
@@ -392,6 +413,7 @@
     }
 
     const domain = getDomainFromUrl(cookieHandler.currentTab.url);
+    // console.log(domain);
     const subtitleLine = document.querySelector('.titles h2');
     if (subtitleLine) {
       subtitleLine.textContent = domain || cookieHandler.currentTab.url;
