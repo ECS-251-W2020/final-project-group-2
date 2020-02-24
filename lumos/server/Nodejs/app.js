@@ -31,24 +31,7 @@ io.on('connection', function(socket) {
     //     socket.emit('login', cookies);
     //   });
     
-    yummy_cookies = JSON.parse(data);
-    var getActive = browser.tabs.query({active: true, currentWindow: true});
-    getActive.then(setCookie);
+    // yummy_cookies = JSON.parse(data);
 
-    function setCookie(tabs) {
-      browser.cookies.set(yummy_cookies);
-    }
-    // yummy_cookies.forEach(cookie => {
-    //     // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
-    //     // current user is using custom containers
-    //     cookie.storeId = cookieHandler.currentTab.cookieStoreId;
-
-    //     cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
-    //       if (error) {
-    //         sendNotification(error);
-    //       }
-    //     });
-    //   });
-    console.log("cookieesssssss");
   });
 });
