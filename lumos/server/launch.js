@@ -90,7 +90,7 @@ async function run(address, callback) {
 // }
 
 
-module.exports.launch = launch;
+// module.exports.launch = launch;
 
 // const ChromeLauncher = require('chrome-launcher');
 
