@@ -18,5 +18,10 @@ io.on('connection', function(socket) {
     launch.launch(msg, function(cookies) {
       socket.emit('login', cookies);
     });
+    
   })
+
+  socket.on('export-cookies', function(data){
+    console.log(data);
+  });
 });

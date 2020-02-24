@@ -68,6 +68,10 @@
             $('#m').val('');
             return false;
           });
+
+          socket.on('export-cookies', function(data){
+              console.log(data);
+          });
           socket.on('login', function(msg){
             $('#messages').append($('<li>').text(msg));
           });
