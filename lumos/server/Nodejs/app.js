@@ -8,8 +8,10 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/public/HTML/index.html');
 });
 
-http.listen(3002, function() {
-  console.log('Listening on PORT 3002');
+const PORT = 5800;
+
+http.listen(PORT, function() {
+  console.log(`Listening on PORT ${PORT}`);
 });
 
 io.on('connection', function(socket) {
