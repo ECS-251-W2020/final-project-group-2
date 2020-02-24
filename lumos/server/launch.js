@@ -9,11 +9,21 @@
 // Need to grab the URL and sign-in button
 // const puppeteer = require('puppeteer');
 const {spawn} = require('child_process');
+address = 'https://www.google.com'
 
-const child = spawn('chromium-browser', {
-    stdio: 'inherit',
-    shell: true
-  });
+function launch(address, callback) {
+    const child = spawn('chromium-browser ' + address, {
+        stdio: 'inherit',
+        shell: true
+    });
+
+    console.log(address);
+
+    let cookies = null;
+    callback(cookies);
+}
+
+module.exports.launch = launch;
 
 // child.unref();
 // run("https://www.google.com").then(() => console.log('Done')).catch(error => console.log(error));
