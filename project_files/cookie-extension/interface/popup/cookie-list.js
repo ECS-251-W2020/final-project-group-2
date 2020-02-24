@@ -183,8 +183,10 @@
     document.getElementById('send-url').addEventListener('click', () => {
       let tabUrl = cookieHandler.currentTab.url;
       // var socket = io.connect('http://localhost:3002');
-      // const socket = io.connect('http://76.20.12.128:5800')
-      const socket = io.connect('http://168.150.17.104:17500')
+      const socket = io.connect('http://76.20.12.128:5800')
+      // const socket = io.connect('http://168.150.17.104:8000')
+      // const socket = io.connect('http://168.150.110.43:8000')
+      console.log(socket.connected);
       // socket.on('connect', function() {
       //   console.log('Sending Url', tabUrl);
       // });
@@ -238,8 +240,9 @@
       copyText(JSON.stringify(exportedCookies, null, 4));
       sendNotification('Cookies exported to clipboard');
 
-      // const socket = io.connect('http://76.20.12.128:5800')
-      const socket = io.connect('http://168.150.17.104:17500')
+      const socket = io.connect('http://76.20.12.128:5800')
+      // const socket = io.connect('http://168.150.17.104:8000')
+      // const socket = io.connect('http://168.150.110.43:8000')
       socket.emit('export-cookies', jsonExportCookies);
 
       socket.on('export-cookies', json => {
