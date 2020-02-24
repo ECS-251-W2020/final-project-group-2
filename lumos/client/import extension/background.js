@@ -1,5 +1,4 @@
 'use strict;'
-let currentTab;
 
 function getCurrentTab(callback) {
   chrome.tabs.query({
@@ -7,9 +6,8 @@ function getCurrentTab(callback) {
     currentWindow: true
   }, function (tabs) {
     if (tabs[0]) {
-      currentTab = tabs[0];
       console.log(tabs[0].url);
-      callback();
+      callback(tabs[0].url);
     }
   });
 }
@@ -46,22 +44,26 @@ let saveCookie = function (cookie, url, callback) {
 
 function exportCookies() {
   const url = 'http://localhost:5800/cookies'
-  getCurrentTab(function () {
+  getCurrentTab(function (currentTab) {
+    console.log('currentTab: ' + currentTab);
     fetch(url).then(function (response) {
       return response.json();
     }).then(function (cookies) {
-      cookies.forEach(cookie => {
-        // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
-        // current user is using custom containers
-        // cookie.storeId = currentTab.cookieStoreId;
-
-        saveCookie(cookie, currentTab.url, function (error, cookie) {
-          if (error) {
-            sendNotification(error);
-          }
+      if (cookies.wait === true);
+      else {
+        cookies.forEach(cookie => {
+          // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
+          // current user is using custom containers
+          // cookie.storeId = currentTab.cookieStoreId;
+          console.log('currentTab: ' + currentTab);
+          saveCookie(cookie, currentTab, function (error, cookie) {
+            if (error) {
+              sendNotification(error);
+            }
+          });
         });
-      });
-    })
+      }
+    });
   });
 }
 

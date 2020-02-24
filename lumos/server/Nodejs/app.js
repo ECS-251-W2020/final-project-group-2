@@ -16,7 +16,7 @@ http.listen(PORT, function() {
 
 //REST APIs
 
-let cookies = 'wait';
+let cookies = '{key: "wait"}';
 
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/public/HTML/index.html');
@@ -33,8 +33,11 @@ app.post('/cookies', function(req, res) {
 });
 
 app.get('/cookies', function(req, res) {
-  if(cookies === 'wait') res.send('wait') 
-  else res.send(cookies);
+  if(cookies === 'wait') res.send({"wait":true});
+  else{
+    res.send(cookies);
+    // cookies = 'wait';
+  } 
 });
 
 
