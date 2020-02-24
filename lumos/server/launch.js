@@ -8,15 +8,11 @@
 
 // Need to grab the URL and sign-in button
 // const puppeteer = require('puppeteer');
-const {exec} = require('child_process');
+const {spawn} = require('child_process');
 
-exec('chromium-browser', (err, stdout, stderr) => {
-    if (err) {
-      console.error(`exec error: ${err}`);
-      return;
-    }
-  
-    // console.log(`version ${stdout}`);
+const child = spawn('chromium-browser', , {
+    stdio: 'inherit',
+    shell: true
   });
 
 // child.unref();
