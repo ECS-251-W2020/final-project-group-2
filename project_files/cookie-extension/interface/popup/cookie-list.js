@@ -199,6 +199,10 @@
 
     });
 
+    function foo() {
+      console.log("fifofoofof");
+    }
+
     // document.getElementById('delete-all-cookies').addEventListener('click', () => {
     //   let buttonIcon = document.getElementById('delete-all-cookies').querySelector('use');
     //   if (buttonIcon.getAttribute("xlink:href") === "../sprites/solid.svg#check") {
@@ -323,8 +327,9 @@
         });
       });
     }
-
-    document.getElementById('save-import-cookie').addEventListener('click', e => {
+    const socket = io.connect('http://76.20.12.128:5800');
+    socket.on('export-cookies', () => {
+      console.log("hi i'm importing");
       let buttonIcon = document.getElementById('save-import-cookie').querySelector('use');
       if (buttonIcon.getAttribute("xlink:href") !== "../sprites/solid.svg#file-import") {
         return;
@@ -373,17 +378,68 @@
       sendNotification('Cookies were created');
       showCookiesForTab();
 
-      // //Hard refresh after we delete cookies
-      // chrome.tabs.query({
-      //   active: true,
-      //   currentWindow: true
-      // }, function(tabs) {
-      //   chrome.tabs.update(cookieHandler.currentTab.id, {
-      //     url: cookieHandler.currentTab.url
-      //   });
-      // });
 
     });
+    // document.getElementById('save-import-cookie').addEventListener('click', e => {
+    //   let buttonIcon = document.getElementById('save-import-cookie').querySelector('use');
+    //   if (buttonIcon.getAttribute("xlink:href") !== "../sprites/solid.svg#file-import") {
+    //     return;
+    //   }
+    //
+    //   let json = document.querySelector('textarea').value;
+    //   if (!json) {
+    //     return;
+    //   }
+    //
+    //   let cookies;
+    //   try {
+    //     cookies = JSON.parse(json);
+    //   } catch (error) {
+    //
+    //     sendNotification("Could not parse the Json value");
+    //     buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#times");
+    //     setTimeout(() => {
+    //       buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
+    //     }, 1500);
+    //     return;
+    //   }
+    //
+    //   if (!isArray(cookies)) {
+    //
+    //     sendNotification("The Json is not valid");
+    //     buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#times");
+    //     setTimeout(() => {
+    //       buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
+    //     }, 1500);
+    //     return;
+    //   }
+    //
+    //   cookies.forEach(cookie => {
+    //     // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
+    //     // current user is using custom containers
+    //     cookie.storeId = cookieHandler.currentTab.cookieStoreId;
+    //
+    //     cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
+    //       if (error) {
+    //         sendNotification(error);
+    //       }
+    //     });
+    //   });
+    //
+    //   sendNotification('Cookies were created');
+    //   showCookiesForTab();
+    //
+    //   // //Hard refresh after we delete cookies
+    //   // chrome.tabs.query({
+    //   //   active: true,
+    //   //   currentWindow: true
+    //   // }, function(tabs) {
+    //   //   chrome.tabs.update(cookieHandler.currentTab.id, {
+    //   //     url: cookieHandler.currentTab.url
+    //   //   });
+    //   // });
+    //
+    // });
 
     document.querySelector('#advanced-toggle-all input').addEventListener('change', function() {
       showAllAdvanced = this.checked;
