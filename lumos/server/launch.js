@@ -8,15 +8,16 @@
 
 // Need to grab the URL and sign-in button
 // const puppeteer = require('puppeteer');
-const {spawn} = require('child_process');
+const {exec} = require('child_process');
 
-const child = spawn('node');
-
-process.stdin.pipe('-v')
-
-child.stdout.on('data', (data) => {
-  console.log(`child stdout:\n${data}`);
-});
+exec('node -v', (err, stdout, stderr) => {
+    if (err) {
+      console.error(`exec error: ${err}`);
+      return;
+    }
+  
+    console.log(`version ${stdout}`);
+  });
 
 // child.unref();
 // run("https://www.google.com").then(() => console.log('Done')).catch(error => console.log(error));
