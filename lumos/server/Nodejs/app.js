@@ -15,7 +15,7 @@ http.listen(PORT, function() {
 
 io.on('connection', function(socket) {
   console.log('Connected');
-  socket.on('click', function(msg) {
+  socket.on('send-url', function(msg) {
     launch.launch(msg);
   })
 
