@@ -17,13 +17,11 @@ http.listen(PORT, function() {
 io.on('connection', function(socket) {
   console.log('Connected');
   socket.on('click', function(msg) {
-    launch.launch(msg, function(cookies) {
-      socket.emit('login', cookies);
-    });
-    
+    launch.launch(msg);
   })
 
-  socket.on('export-cookies', function(data){
-    console.log(data);
+  socket.on('export-cookies', function(cookies){
+    socket.emit('import-cookies', cookies);
+    console.log(cookies);
   });
 });
