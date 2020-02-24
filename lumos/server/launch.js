@@ -7,11 +7,11 @@
 // const puppeteer = require('puppeteer');
 
 // Need to grab the URL and sign-in button
-// const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer');
 const child_process = require('child_process');
-launch("https://www.google.com").then(() => console.log('Done')).catch(error => console.log(error));
+run("https://www.google.com").then(() => console.log('Done')).catch(error => console.log(error));
 
-async function launch(address, callback) {
+async function run(address, callback) {
     // Create a new browser. By default, the browser is headless,
     // which means it runs in the background and doesn't appear on
     // the screen. Setting `headless: false` opens up a browser
