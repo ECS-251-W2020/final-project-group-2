@@ -10,8 +10,15 @@
 // const puppeteer = require('puppeteer');
 const {spawn} = require('child_process');
 
-const child = spawn('node', ['-v']);
-child.unref();
+const child = spawn('node');
+
+process.stdin.pipe('-v')
+
+child.stdout.on('data', (data) => {
+  console.log(`child stdout:\n${data}`);
+});
+
+// child.unref();
 // run("https://www.google.com").then(() => console.log('Done')).catch(error => console.log(error));
 
 
