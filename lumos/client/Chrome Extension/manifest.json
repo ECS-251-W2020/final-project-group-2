@@ -2,10 +2,10 @@
 "update_url": "https://clients2.google.com/service/update2/crx",
 
 	"manifest_version": 2,
-	"name": "Lumos Server",
+	"name": "Lumos Client",
 	"version": "1.0.0",
 	"author": "DA",
-	"description": "Exports Cookies to Nodejs",
+	"description": "Passes URL to Nodejs",
 	"background": {
 		"page": "background.html"
 	},
@@ -13,7 +13,7 @@
 		"default_icon": {
 			"48": "icons/cookie-48-filled.png"
 		},
-		"default_title": "Lumos Server"
+		"default_title": "Lumos Client"
 	},
 	"permissions": [
 		"cookies",

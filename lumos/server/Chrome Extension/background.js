@@ -1,6 +1,6 @@
 'use strict;'
 function exportCookies() {
-
+    const socket = io.connect('http://localhost:5800')
     // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     //     if (tabs[0]) {
     //         console.log(tabs[0].url);
@@ -35,10 +35,9 @@ function exportCookies() {
       
           // do something with the cookies here
           console.log(cookies);
+          socket.emit('export-cookies', cookies);
         });
       });
 }
-
-
 
 chrome.browserAction.onClicked.addListener(exportCookies);
