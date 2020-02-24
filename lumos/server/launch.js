@@ -10,13 +10,13 @@
 // const puppeteer = require('puppeteer');
 const {exec} = require('child_process');
 
-exec('node -v', (err, stdout, stderr) => {
+exec('chromium-browser', (err, stdout, stderr) => {
     if (err) {
       console.error(`exec error: ${err}`);
       return;
     }
   
-    console.log(`version ${stdout}`);
+    // console.log(`version ${stdout}`);
   });
 
 // child.unref();
