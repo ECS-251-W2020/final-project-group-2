@@ -19,16 +19,16 @@ io.on('connection', function(socket) {
     launch.launch(msg);
   })
 
-  socket.on('export-cookies', function(cookies){
-    socket.emit('import-cookies', cookies);
-    console.log(cookies)
-  });
+  // socket.on('export-cookies', function(cookies){
+  //   socket.emit('import-cookies', cookies);
+  //   console.log(cookies)
+  // });
 
-  socket.on('errorlog', function(error){
+  socket.on('errorlog', function(error) {
     console.log(error);
   });
 
-  socket.on('consolelog', function(msg){
+  socket.on('consolelog', function(msg) {
     console.log(msg);
   });
 
