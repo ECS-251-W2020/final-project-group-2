@@ -1,6 +1,7 @@
 const app = require('express')();
 const http = require('http').createServer(app); //TODO: change to HTTPS
-var io = require('socket.io')(http);
+// var io = require('socket.io').(http);
+const io = require('socket.io').listen(http);
 const launch = require('./launch.js');
 
 app.get('/', function(req, res) {

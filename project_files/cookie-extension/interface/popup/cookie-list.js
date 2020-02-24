@@ -1,12 +1,5 @@
 (function() {
   'use strict';
-
-
-  // // with ES6 import
-  // import io from 'socket.io-client';
-  // 
-  // const socket = io('http://localhost');
-
   let containerCookie;
   let cookiesListHtml;
   let pageTitleContainer;
@@ -187,24 +180,21 @@
       });
     }
 
-    // document.getElementById('create-cookie').addEventListener('click', () => {
-    //   if (disableButtons) {
-    //     return;
-    //   }
-    //
-    //   setPageTitle('Cookie Editor - Create a Cookie');
-    //
-    //   disableButtons = true;
-    //
-    //   Animate.transitionPage(containerCookie, containerCookie.firstChild, createHtmlFormCookie(), 'left', () => {
-    //     disableButtons = false;
-    //   });
-    //
-    //
-    //   document.getElementById('button-bar-default').classList.remove('active');
-    //   document.getElementById('button-bar-add').classList.add('active');
-    //   return false;
-    // });
+    document.getElementById('send-url').addEventListener('click', () => {
+      let tabUrl = cookieHandler.currentTab.url;
+      var socket = io.connect('http://localhost:3002');
+      socket.on('connect', function() {
+        console.log('Client connected', tabUrl);
+      });
+
+      socket.emit('click', tabUrl);
+
+      // socket.on('login', function(msg){ //msg should be cookies in string form
+      //   $('#messages').append($('<li>').text(msg));
+      // });
+
+
+    });
 
     // document.getElementById('delete-all-cookies').addEventListener('click', () => {
     //   let buttonIcon = document.getElementById('delete-all-cookies').querySelector('use');
@@ -226,11 +216,9 @@
     document.getElementById('export-cookies').addEventListener('click', () => {
 
       let tabUrl = cookieHandler.currentTab.url;
-      console.log(tabUrl);
-      var socket = io();
       var socket = io.connect('http://localhost:3002');
       socket.on('connect', function() {
-        console.log('Client connected');
+        console.log('Client connected', tabUrl);
       });
       let buttonIcon = document.getElementById('export-cookies').querySelector('use');
       if (buttonIcon.getAttribute("xlink:href") === "../sprites/solid.svg#check") {
