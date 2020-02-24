@@ -1,17 +1,5 @@
 'use strict;'
 function exportCookies() {
-    const socket = io.connect('http://192.168.1.2:5800')
-    // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    //     if (tabs[0]) {
-    //         console.log(tabs[0].url);
-    //         chrome.cookies.getAll({
-    //             domain: tabs[0].url,
-    //         }, function(cookies){
-    //             console.log(cookies);
-    //         });
-    //     }
-    // });
-
     chrome.tabs.executeScript({
         code: 'performance.getEntriesByType("resource").map(e => e.name)',
       }, data => {
@@ -35,7 +23,11 @@ function exportCookies() {
       
           // do something with the cookies here
           console.log(cookies);
-          socket.emit('export-cookies', cookies);
+          const xhr = new XMLHttpRequest();
+          const url = 'http://localhost:5800/cookies'
+          xhr.open('POST', url, true);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(JSON.stringify(cookies));
         });
       });
 }

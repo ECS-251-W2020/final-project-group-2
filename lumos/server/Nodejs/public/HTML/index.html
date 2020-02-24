@@ -53,30 +53,42 @@
 </head>
 
 <body>
-    <ul id="messages"></ul>
+      <ul id="messages"></ul>
     <form action="">
+        <select id="type">
+            <option value="export-cookies">export-cookies</option>
+            <option value="errorlog">errorlog</option>
+            <option value="consolelog">consolelog</option>
+            <option value="click">click</option>
+          </select>
         <input id="m" autocomplete="off" /><button>Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
         $(function () {
-          var socket = io();
-          $('form').submit(function(e){
-            e.preventDefault(); // prevents page reloading
-            socket.emit('click', $('#m').val());
-            $('#m').val('');
-            return false;
-          });
+            var socket = io();
+            $('form').submit(function (e) {
+                e.preventDefault(); // prevents page reloading
+                socket.emit($('#type').val(), $('#m').val());
+                $('#m').val('');
+                return false;
+            });
 
-          socket.on('export-cookies', function(data){
-              console.log(data);
-          });
-          socket.on('login', function(msg){
-            $('#messages').append($('<li>').text(msg));
-          });
+            socket.on('export-cookies', function (data) {
+                console.log(data);
+            });
+            socket.on('import-cookies', function (msg) {
+                $('#messages').append($('<li>').text(msg));
+            });
+            socket.on('errorlog', function (error) {
+                $('#messages').append($('<li>').text(error));
+            });
+            socket.on('consolelog', function (msg) {
+                $('#messages').append($('<li>').text(msg));
+            });
         });
-      </script>
+    </script>
 </body>
 
 </html>
