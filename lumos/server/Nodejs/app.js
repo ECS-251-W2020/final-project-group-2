@@ -24,6 +24,13 @@ io.on('connection', function(socket) {
   })
 
   socket.on('export-cookies', function(data){
-    console.log(data);
+    console.log('Exporting Cookies');
+    // launch.launch(msg, function(cookies) {
+    //     socket.emit('login', cookies);
+    //   });
+    
+    yummy_cookies = JSON.parse(json);
+    console.log(yummy_cookies);
+    console.log("cookieesssssss");
   });
 });
