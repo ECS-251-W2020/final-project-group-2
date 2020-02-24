@@ -13,7 +13,7 @@
 		"default_icon": {
 			"48": "icons/cookie-48-filled.png"
 		},
-		"default_title": "Lumos Client"
+		"default_title": "Lumos Client (IMPORT)"
 	},
 	"permissions": [
 		"cookies",

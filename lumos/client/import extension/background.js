@@ -12,7 +12,7 @@ function getCurrentTab(callback) {
   });
 }
 
-let saveCookie = function (cookie, url, callback) {
+let saveCookie = function (cookie, url) {
   const newCookie = {
     domain: cookie.domain || '',
     name: cookie.name || '',
@@ -36,16 +36,12 @@ let saveCookie = function (cookie, url, callback) {
       }
       return;
     }
-    if (callback) {
-      return callback(null, cookieResponse);
-    }
   });
 }
 
-function exportCookies() {
+function importCookies() {
   const url = 'http://localhost:5800/cookies'
   getCurrentTab(function (currentTab) {
-    console.log('currentTab: ' + currentTab);
     fetch(url).then(function (response) {
       return response.json();
     }).then(function (cookies) {
@@ -55,16 +51,12 @@ function exportCookies() {
           // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
           // current user is using custom containers
           // cookie.storeId = currentTab.cookieStoreId;
-          console.log('currentTab: ' + currentTab);
-          saveCookie(cookie, currentTab, function (error, cookie) {
-            if (error) {
-              sendNotification(error);
-            }
-          });
+
+          saveCookie(cookie, currentTab);
         });
       }
     });
   });
 }
 
-chrome.browserAction.onClicked.addListener(exportCookies);
+chrome.browserAction.onClicked.addListener(importCookies);
