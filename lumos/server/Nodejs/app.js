@@ -16,7 +16,7 @@ http.listen(PORT, function() {
 
 //REST APIs
 
-let cookies = '{key: "wait"}';
+let cookies = 'wait';
 
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/public/HTML/index.html');
