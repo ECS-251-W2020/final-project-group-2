@@ -186,9 +186,9 @@
       const socket = io.connect('http://76.20.12.128:5800')
       console.log("hi");
       console.log(socket.connected)
-      socket.on('connect', function() {
-        console.log('Client connected', tabUrl);
-      });
+      // socket.on('connect', function() {
+      //   console.log('Client connected', tabUrl);
+      // });
 
       socket.emit('click', tabUrl);
 
@@ -218,6 +218,8 @@
 
 
 
+
+
     document.getElementById('export-cookies').addEventListener('click', () => {
 
       // let tabUrl = cookieHandler.currentTab.url;
@@ -244,9 +246,9 @@
 
       const socket = io.connect('http://76.20.12.128:5800')
       console.log(socket.connected)
-      socket.on('connect', function() {
-        console.log('Client connected, sending cookies!');
-      });
+      // socket.on('connect', function() {
+      //   console.log('Client connected, sending cookies!');
+      // });
       socket.emit('export-cookies', jsonExportCookies);
 
       setTimeout(() => {
@@ -305,6 +307,22 @@
     document.getElementById('save-create-cookie').addEventListener('click', () => {
       saveCookieForm(document.querySelector('form'));
     });
+
+
+    function importCookies(json) {
+      cookies = JSON.parse(json);
+      cookies.forEach(cookie => {
+        // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
+        // current user is using custom containers
+        cookie.storeId = cookieHandler.currentTab.cookieStoreId;
+
+        cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
+          if (error) {
+            sendNotification(error);
+          }
+        });
+      });
+    }
 
     document.getElementById('save-import-cookie').addEventListener('click', e => {
       let buttonIcon = document.getElementById('save-import-cookie').querySelector('use');
@@ -674,3 +692,6 @@
     }
   }
 }());
+
+//
+// module.exports.importCookies = importCookies;

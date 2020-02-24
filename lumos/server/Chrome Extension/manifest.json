@@ -18,6 +18,7 @@
 	"permissions": [
 		"cookies",
 		"<all_urls>",
+		"activeTab",
 		"tabs",
 		"storage"
 	],
