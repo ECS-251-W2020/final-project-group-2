@@ -184,6 +184,9 @@
       let tabUrl = cookieHandler.currentTab.url;
       // var socket = io.connect('http://localhost:3002');
       const socket = io.connect('http://76.20.12.128:5800')
+      // const socket = io.connect('http://168.150.17.104:8000')
+      // const socket = io.connect('http://168.150.110.43:8000')
+      console.log(socket.connected);
       // socket.on('connect', function() {
       //   console.log('Sending Url', tabUrl);
       // });
@@ -214,8 +217,66 @@
     //   }, 1500);
     // });
 
+    function importCookies(json) {
+      console.log(json);
+      console.log("hi i'm importing");
+      let buttonIcon = document.getElementById('save-import-cookie').querySelector('use');
+      if (buttonIcon.getAttribute("xlink:href") !== "../sprites/solid.svg#file-import") {
+        return;
+      }
 
+      if (!json) {
+        return;
+      }
 
+      let cookies;
+      try {
+        cookies = JSON.parse(json);
+      } catch (error) {
+
+        sendNotification("Could not parse the Json value");
+        buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#times");
+        setTimeout(() => {
+          buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
+        }, 1500);
+        return;
+      }
+
+      if (!isArray(cookies)) {
+
+        sendNotification("The Json is not valid");
+        buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#times");
+        setTimeout(() => {
+          buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
+        }, 1500);
+        return;
+      }
+
+      cookies.forEach(cookie => {
+        // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
+        // current user is using custom containers
+        cookie.storeId = cookieHandler.currentTab.cookieStoreId;
+
+        cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
+          if (error) {
+            sendNotification(error);
+          }
+        });
+      });
+
+      sendNotification('Cookies were created');
+      showCookiesForTab();
+
+      //Hard refresh after we delete cookies
+      chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      }, function(tabs) {
+        chrome.tabs.update(cookieHandler.currentTab.id, {
+          url: cookieHandler.currentTab.url
+        });
+      });
+    }
 
 
     document.getElementById('export-cookies').addEventListener('click', () => {
@@ -238,59 +299,17 @@
       sendNotification('Cookies exported to clipboard');
 
       const socket = io.connect('http://76.20.12.128:5800')
+      // const socket = io.connect('http://168.150.17.104:8000')
+      // const socket = io.connect('http://168.150.110.43:8000')
       socket.emit('export-cookies', jsonExportCookies);
-
-      socket.on('export-cookies', json => {
-        console.log(json);
-        console.log("hi i'm importing");
-        let buttonIcon = document.getElementById('save-import-cookie').querySelector('use');
-        if (buttonIcon.getAttribute("xlink:href") !== "../sprites/solid.svg#file-import") {
-          return;
-        }
-
-        // let json = document.querySelector('textarea').value;
-        if (!json) {
-          return;
-        }
-
-        let cookies;
-        try {
-          cookies = JSON.parse(json);
-        } catch (error) {
-
-          sendNotification("Could not parse the Json value");
-          buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#times");
-          setTimeout(() => {
-            buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
-          }, 1500);
-          return;
-        }
-
-        if (!isArray(cookies)) {
-
-          sendNotification("The Json is not valid");
-          buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#times");
-          setTimeout(() => {
-            buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
-          }, 1500);
-          return;
-        }
-
-        cookies.forEach(cookie => {
-          // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
-          // current user is using custom containers
-          cookie.storeId = cookieHandler.currentTab.cookieStoreId;
-
-          cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
-            if (error) {
-              sendNotification(error);
-            }
-          });
-        });
-
-        sendNotification('Cookies were created');
-        showCookiesForTab();
+      socket.on('export-cookies', function(cookies) {
+        // socket.emit('import-cookies', cookies);
+        // console.log(cookies)
+        console.log("inside export cookies");
+        importCookies(cookies);
       });
+
+
 
       setTimeout(() => {
         buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
@@ -298,39 +317,41 @@
 
     });
 
-    document.getElementById('import-cookies').addEventListener('click', () => {
-      if (loadedCookies && Object.keys(loadedCookies).length) {
-        for (var cookieId in loadedCookies) {
-          removeCookie(loadedCookies[cookieId].cookie.name);
-        }
-      }
-      sendNotification('All cookies were deleted');
 
-      // //Hard refresh after we delete cookies
-      // chrome.tabs.query({
-      //   active: true,
-      //   currentWindow: true
-      // }, function(tabs) {
-      //   chrome.tabs.update(cookieHandler.currentTab.id, {
-      //     url: cookieHandler.currentTab.url
-      //   });
-      // });
 
-      if (disableButtons) {
-        return;
-      }
-
-      setPageTitle('Cookie Editor - Import Cookies');
-
-      disableButtons = true;
-      Animate.transitionPage(containerCookie, containerCookie.firstChild, createHtmlFormImport(), 'left', () => {
-        disableButtons = false;
-      });
-
-      document.getElementById('button-bar-default').classList.remove('active');
-      document.getElementById('button-bar-import').classList.add('active');
-      return false;
-    });
+    // document.getElementById('import-cookies').addEventListener('click', () => {
+    //   if (loadedCookies && Object.keys(loadedCookies).length) {
+    //     for (var cookieId in loadedCookies) {
+    //       removeCookie(loadedCookies[cookieId].cookie.name);
+    //     }
+    //   }
+    //   sendNotification('All cookies were deleted');
+    //
+    //   // //Hard refresh after we delete cookies
+    //   // chrome.tabs.query({
+    //   //   active: true,
+    //   //   currentWindow: true
+    //   // }, function(tabs) {
+    //   //   chrome.tabs.update(cookieHandler.currentTab.id, {
+    //   //     url: cookieHandler.currentTab.url
+    //   //   });
+    //   // });
+    //
+    //   if (disableButtons) {
+    //     return;
+    //   }
+    //
+    //   setPageTitle('Cookie Editor - Import Cookies');
+    //
+    //   disableButtons = true;
+    //   Animate.transitionPage(containerCookie, containerCookie.firstChild, createHtmlFormImport(), 'left', () => {
+    //     disableButtons = false;
+    //   });
+    //
+    //   document.getElementById('button-bar-default').classList.remove('active');
+    //   document.getElementById('button-bar-import').classList.add('active');
+    //   return false;
+    // });
 
     document.getElementById('return-list-add').addEventListener('click', () => {
       showCookiesForTab();
@@ -350,20 +371,20 @@
     });
 
 
-    function importCookies(json) {
-      cookies = JSON.parse(json);
-      cookies.forEach(cookie => {
-        // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
-        // current user is using custom containers
-        cookie.storeId = cookieHandler.currentTab.cookieStoreId;
-
-        cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
-          if (error) {
-            sendNotification(error);
-          }
-        });
-      });
-    }
+    // function importCookies(json) {
+    //   cookies = JSON.parse(json);
+    //   cookies.forEach(cookie => {
+    //     // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
+    //     // current user is using custom containers
+    //     cookie.storeId = cookieHandler.currentTab.cookieStoreId;
+    //
+    //     cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
+    //       if (error) {
+    //         sendNotification(error);
+    //       }
+    //     });
+    //   });
+    // }
 
     // document.getElementById('save-import-cookie').addEventListener('click', e => {
     //   let buttonIcon = document.getElementById('save-import-cookie').querySelector('use');

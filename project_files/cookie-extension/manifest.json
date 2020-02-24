@@ -29,7 +29,7 @@
       "run_at": "document_end",
       "all_frames": true,
       "matches": ["*://*/*"],
-      "js": ["content.js", "cookie-editor.js"]
+      "js": ["content.js"]
     }
   ],
 	"devtools_page": "interface/devtools/devtool.html",
