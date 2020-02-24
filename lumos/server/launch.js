@@ -11,6 +11,7 @@
 const {spawn} = require('child_process');
 
 const child = spawn('node', ['-v']);
+child.unref();
 // run("https://www.google.com").then(() => console.log('Done')).catch(error => console.log(error));
 
 
