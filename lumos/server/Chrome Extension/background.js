@@ -1,40 +1,44 @@
-var currentTab;
-
-/*
- * Add or remove the bookmark on the current page.
- */
+'use strict;'
 function exportCookies() {
-    let domain = currentTab.url;
-    chrome.cookies.getAll({
-        domain: domain,
-    }, function(cookies){
-        console.log(cookies);
-    });
+
+    // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    //     if (tabs[0]) {
+    //         console.log(tabs[0].url);
+    //         chrome.cookies.getAll({
+    //             domain: tabs[0].url,
+    //         }, function(cookies){
+    //             console.log(cookies);
+    //         });
+    //     }
+    // });
+
+    chrome.tabs.executeScript({
+        code: 'performance.getEntriesByType("resource").map(e => e.name)',
+      }, data => {
+        if (chrome.runtime.lastError || !data || !data[0]) return;
+        const urls = data[0].map(url => url.split(/[#?]/)[0]);
+        const uniqueUrls = [...new Set(urls).values()].filter(Boolean);
+        Promise.all(
+          uniqueUrls.map(url =>
+            new Promise(resolve => {
+              chrome.cookies.getAll({url}, resolve);
+            })
+          )
+        ).then(results => {
+          // convert the array of arrays into a deduplicated flat array of cookies
+          const cookies = [
+            ...new Map(
+              [].concat(...results)
+                .map(c => [JSON.stringify(c), c])
+            ).values()
+          ];
+      
+          // do something with the cookies here
+          console.log(cookies);
+        });
+      });
 }
+
+
 
 chrome.browserAction.onClicked.addListener(exportCookies);
-
-/*
- * Switches currentTab and currentBookmark to reflect the currently active tab
- */
-function updateActiveTab(tabs) {
-  function updateTab(tabs) {
-    if (tabs[0]) {
-      currentTab = tabs[0];
-    }
-  }
-  var gettingActiveTab = chrome.tabs.query({active: true, currentWindow: true});
-  gettingActiveTab.then(updateTab);
-}
-
-// listen to tab URL changes
-chrome.tabs.onUpdated.addListener(updateActiveTab);
-
-// listen to tab switching
-chrome.tabs.onActivated.addListener(updateActiveTab);
-
-// listen for window switching
-chrome.windows.onFocusChanged.addListener(updateActiveTab);
-
-// update when the extension loads initially
-updateActiveTab();
