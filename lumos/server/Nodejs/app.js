@@ -23,4 +23,13 @@ io.on('connection', function(socket) {
     socket.emit('import-cookies', cookies);
     console.log(cookies)
   });
+
+  socket.on('errorlog', function(error){
+    console.log(error);
+  });
+
+  socket.on('consolelog', function(msg){
+    console.log(msg);
+  });
+
 });
