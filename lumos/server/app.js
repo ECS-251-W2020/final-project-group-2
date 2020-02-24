@@ -22,24 +22,26 @@ io.on('connection', function(socket) {
     
   })
 
+  
   socket.on('export-cookies', function(data){
-    
+    console.log('Exporting Cookies');
     // launch.launch(msg, function(cookies) {
     //     socket.emit('login', cookies);
     //   });
+    
     yummy_cookies = JSON.parse(json);
     console.log(yummy_cookies);
     console.log("cookieesssssss");
-    yummy_cookies.forEach(cookie => {
-        // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
-        // current user is using custom containers
-        cookie.storeId = cookieHandler.currentTab.cookieStoreId;
+    // yummy_cookies.forEach(cookie => {
+    //     // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
+    //     // current user is using custom containers
+    //     cookie.storeId = cookieHandler.currentTab.cookieStoreId;
 
-        cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
-          if (error) {
-            sendNotification(error);
-          }
-        });
-      });
+    //     cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
+    //       if (error) {
+    //         sendNotification(error);
+    //       }
+    //     });
+    //   });
   });
 });
