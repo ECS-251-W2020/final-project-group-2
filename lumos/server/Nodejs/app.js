@@ -4,6 +4,8 @@ const http = require('http').createServer(app); //TODO: change to HTTPS
 const io = require('socket.io').listen(http);
 const launch = require('./launch.js');
 
+const cookieHandler = new CookieHandler();
+
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/public/HTML/index.html');
 });
