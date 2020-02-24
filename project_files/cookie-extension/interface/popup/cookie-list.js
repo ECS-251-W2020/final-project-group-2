@@ -184,11 +184,9 @@
       let tabUrl = cookieHandler.currentTab.url;
       // var socket = io.connect('http://localhost:3002');
       const socket = io.connect('http://76.20.12.128:5800')
-      console.log("hi");
-      console.log(socket.connected)
-      socket.on('connect', function() {
-        console.log('Client connected', tabUrl);
-      });
+      // socket.on('connect', function() {
+      //   console.log('Sending Url', tabUrl);
+      // });
 
       socket.emit('click', tabUrl);
 
@@ -198,10 +196,6 @@
 
 
     });
-
-    function foo() {
-      console.log("fifofoofof");
-    }
 
     // document.getElementById('delete-all-cookies').addEventListener('click', () => {
     //   let buttonIcon = document.getElementById('delete-all-cookies').querySelector('use');
@@ -225,12 +219,7 @@
 
 
     document.getElementById('export-cookies').addEventListener('click', () => {
-
-      // let tabUrl = cookieHandler.currentTab.url;
-      // var socket = io.connect('http://localhost:3002');
-      // socket.on('connect', function() {
-      //   console.log('Client connected', tabUrl);
-      // });
+      console.log("hi i'm exporting cookies");
       let buttonIcon = document.getElementById('export-cookies').querySelector('use');
       if (buttonIcon.getAttribute("xlink:href") === "../sprites/solid.svg#check") {
         return;
@@ -249,11 +238,61 @@
       sendNotification('Cookies exported to clipboard');
 
       const socket = io.connect('http://76.20.12.128:5800')
-      console.log(socket.connected)
-      socket.on('connect', function() {
-        console.log('Client connected, sending cookies!');
-      });
       socket.emit('export-cookies', jsonExportCookies);
+
+      socket.on('export-cookies', json => {
+        console.log(json);
+        console.log("hi i'm importing");
+        let buttonIcon = document.getElementById('save-import-cookie').querySelector('use');
+        if (buttonIcon.getAttribute("xlink:href") !== "../sprites/solid.svg#file-import") {
+          return;
+        }
+
+        // let json = document.querySelector('textarea').value;
+        if (!json) {
+          return;
+        }
+
+        let cookies;
+        try {
+          cookies = JSON.parse(json);
+        } catch (error) {
+
+          sendNotification("Could not parse the Json value");
+          buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#times");
+          setTimeout(() => {
+            buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
+          }, 1500);
+          return;
+        }
+
+        if (!isArray(cookies)) {
+
+          sendNotification("The Json is not valid");
+          buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#times");
+          setTimeout(() => {
+            buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
+          }, 1500);
+          return;
+        }
+
+        cookies.forEach(cookie => {
+          // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
+          // current user is using custom containers
+          cookie.storeId = cookieHandler.currentTab.cookieStoreId;
+
+          cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
+            if (error) {
+              sendNotification(error);
+            }
+          });
+        });
+
+        sendNotification('Cookies were created');
+        showCookiesForTab();
+
+
+      });
 
       setTimeout(() => {
         buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
@@ -327,59 +366,7 @@
         });
       });
     }
-    const socket = io.connect('http://76.20.12.128:5800');
-    socket.on('export-cookies', () => {
-      console.log("hi i'm importing");
-      let buttonIcon = document.getElementById('save-import-cookie').querySelector('use');
-      if (buttonIcon.getAttribute("xlink:href") !== "../sprites/solid.svg#file-import") {
-        return;
-      }
 
-      let json = document.querySelector('textarea').value;
-      if (!json) {
-        return;
-      }
-
-      let cookies;
-      try {
-        cookies = JSON.parse(json);
-      } catch (error) {
-
-        sendNotification("Could not parse the Json value");
-        buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#times");
-        setTimeout(() => {
-          buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
-        }, 1500);
-        return;
-      }
-
-      if (!isArray(cookies)) {
-
-        sendNotification("The Json is not valid");
-        buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#times");
-        setTimeout(() => {
-          buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
-        }, 1500);
-        return;
-      }
-
-      cookies.forEach(cookie => {
-        // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
-        // current user is using custom containers
-        cookie.storeId = cookieHandler.currentTab.cookieStoreId;
-
-        cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
-          if (error) {
-            sendNotification(error);
-          }
-        });
-      });
-
-      sendNotification('Cookies were created');
-      showCookiesForTab();
-
-
-    });
     // document.getElementById('save-import-cookie').addEventListener('click', e => {
     //   let buttonIcon = document.getElementById('save-import-cookie').querySelector('use');
     //   if (buttonIcon.getAttribute("xlink:href") !== "../sprites/solid.svg#file-import") {
