@@ -4,7 +4,7 @@ const http = require('http').createServer(app); //TODO: change to HTTPS
 const io = require('socket.io').listen(http);
 const launch = require('./launch.js');
 
-const cookieHandler = new CookieHandler();
+// const cookieHandler = new CookieHandler();
 
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/public/HTML/index.html');
@@ -32,17 +32,23 @@ io.on('connection', function(socket) {
     //   });
     
     yummy_cookies = JSON.parse(data);
-    yummy_cookies.forEach(cookie => {
-        // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
-        // current user is using custom containers
-        cookie.storeId = cookieHandler.currentTab.cookieStoreId;
+    var getActive = browser.tabs.query({active: true, currentWindow: true});
+    getActive.then(setCookie);
 
-        cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
-          if (error) {
-            sendNotification(error);
-          }
-        });
-      });
+    function setCookie(tabs) {
+      browser.cookies.set(yummy_cookies);
+    }
+    // yummy_cookies.forEach(cookie => {
+    //     // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
+    //     // current user is using custom containers
+    //     cookie.storeId = cookieHandler.currentTab.cookieStoreId;
+
+    //     cookieHandler.saveCookie(cookie, getCurrentTabUrl(), function(error, cookie) {
+    //       if (error) {
+    //         sendNotification(error);
+    //       }
+    //     });
+    //   });
     console.log("cookieesssssss");
   });
 });
