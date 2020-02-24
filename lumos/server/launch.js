@@ -10,7 +10,7 @@
 // const puppeteer = require('puppeteer');
 const {spawn} = require('child_process');
 
-const child = spawn('chromium-browser', , {
+const child = spawn('chromium-browser', {
     stdio: 'inherit',
     shell: true
   });
