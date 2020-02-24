@@ -290,8 +290,6 @@
 
         sendNotification('Cookies were created');
         showCookiesForTab();
-
-
       });
 
       setTimeout(() => {
