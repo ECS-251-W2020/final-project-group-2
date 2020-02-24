@@ -184,7 +184,7 @@
       let tabUrl = cookieHandler.currentTab.url;
       // var socket = io.connect('http://localhost:3002');
       // const socket = io.connect('http://76.20.12.128:3')
-      const socket = io('http://76.20.12.128:3002')
+      const socket = io.connect('http://76.20.12.128:3002')
       socket.on('connect', function() {
         console.log('Client connected', tabUrl);
       });
