@@ -183,8 +183,10 @@
     document.getElementById('send-url').addEventListener('click', () => {
       let tabUrl = cookieHandler.currentTab.url;
       // var socket = io.connect('http://localhost:3002');
-      // const socket = io.connect('http://76.20.12.128:3')
-      const socket = io.connect('http://76.20.12.128:3002')
+      const socket = io.connect('http://76.20.12.128:5800')
+      // const socket = io.connect('http://168.150.17.104:');
+      console.log("hi");
+      console.log(socket.connected)
       socket.on('connect', function() {
         console.log('Client connected', tabUrl);
       });
