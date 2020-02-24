@@ -1,6 +1,12 @@
 (function() {
   'use strict';
 
+
+  // // with ES6 import
+  // import io from 'socket.io-client';
+  // 
+  // const socket = io('http://localhost');
+
   let containerCookie;
   let cookiesListHtml;
   let pageTitleContainer;
@@ -221,6 +227,11 @@
 
       let tabUrl = cookieHandler.currentTab.url;
       console.log(tabUrl);
+      var socket = io();
+      var socket = io.connect('http://localhost:3002');
+      socket.on('connect', function() {
+        console.log('Client connected');
+      });
       let buttonIcon = document.getElementById('export-cookies').querySelector('use');
       if (buttonIcon.getAttribute("xlink:href") === "../sprites/solid.svg#check") {
         return;
