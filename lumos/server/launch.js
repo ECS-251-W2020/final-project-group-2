@@ -20,7 +20,7 @@ function launch(address, callback) {
     console.log(address);
 
     let cookies = null;
-    callback(cookies);
+    // callback(cookies);
 }
 
 module.exports.launch = launch;
