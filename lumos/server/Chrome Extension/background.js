@@ -2,7 +2,7 @@
 
 const url = 'http://localhost:5800/cookies'
 
-let getCookies = new Promise((resolve, reject) => {
+function getCookies(callback) {
     chrome.tabs.executeScript({
         code: 'performance.getEntriesByType("resource").map(e => e.name)',
     }, data => {
@@ -25,14 +25,14 @@ let getCookies = new Promise((resolve, reject) => {
                     .map(c => [JSON.stringify(c), c])
                 ).values()
             ];
-
             // do something with the cookies here
-            resolve(cookies);
+            callback(cookies);
         });
     });
-});
+};
 
 function postReq(url, content) {
+    console.log(content);
     fetch(url, {
         method: 'post',
         headers: {
@@ -44,8 +44,8 @@ function postReq(url, content) {
 }
 
 function exportCookies() {
-    getCookies()
-        .then((cookies) => {
+    getCookies((cookies) => {
+            console.log("fetcher");
             return postReq(url, cookies);
         })
         .then((response) => {
@@ -53,7 +53,8 @@ function exportCookies() {
         })
         .catch((error) => {
             console.log(error);
-        });;
+        });
+
 }
 
 // const xhr = new XMLHttpRequest();
