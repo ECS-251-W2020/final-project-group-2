@@ -1,6 +1,6 @@
 'use strict;'
 
-const url = 'http://localhost:5800/cookies';
+const url = 'http://localhost:5800/get-cookies';
 
 function getCurrentTab(callback) {
     chrome.tabs.query({
@@ -8,7 +8,7 @@ function getCurrentTab(callback) {
         currentWindow: true
     }, function (tabs) {
         if (tabs[0]) {
-            callback(tabs[0].url);
+            callback(tabs[0]);
         }
     });
 }
@@ -40,25 +40,36 @@ let saveCookie = function (cookie, url) {
     });
 }
 
+function postReq(url, content, callback) {
+    fetch(url, {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json, text/plain, *.*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(content)
+        })
+        .then(res => res.json())
+        .then(res => callback(res));
+}
+
 function importCookies() {
-    getCurrentTab(function (tabUrl) {
-        fetch(`${url}/${tabUrl}`)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (cookies) {
-                if (cookies.wait === true);
-                else {
-                    cookies.forEach(cookie => {
-                        // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
-                        // current user is using custom containers
-                        // cookie.storeId = tabUrl.cookieStoreId;
+    getCurrentTab(function (tab) {
+        postReq(url, {
+            url: tab.url
+        }, function (cookies) {
+            if (cookies.wait === true);
+            else {
+                cookies.forEach(cookie => {
+                    // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
+                    // current user is using custom containers
+                    // cookie.storeId = tabUrl.cookieStoreId;
 
-                        saveCookie(cookie, tabUrl);
-                    });
-
-                }
-            });
+                    saveCookie(cookie, tab.url);
+                });
+                chrome.tabs.executeScript(tab.id, {code: 'window.location.reload();'});
+            }
+        });
     });
 }
 

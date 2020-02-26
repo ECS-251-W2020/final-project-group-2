@@ -8,26 +8,28 @@ function getCurrentTab(callback) {
         currentWindow: true
     }, function (tabs) {
         if (tabs[0]) {
-            callback(tabs[0].url);
+            callback(tabs[0]);
         }
     });
 }
 
 function postReq(url, content, callback) {
     fetch(url, {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json, text/plain, *.*',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(content)
-    }).then(response => callback(response));
+            method: 'post',
+            headers: {
+                'Accept': 'application/json, text/plain, *.*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(content)
+        })
+        .then(res => res.json())
+        .then(res => callback(res));
 }
 
 function exportUrl() {
-    getCurrentTab(function (tabUrl) {
+    getCurrentTab(function (tab) {
         postReq(url, {
-            value: tabUrl
+            value: tab.url
         }, response => {
             //HAIXIN: call the second extension code here!
 
