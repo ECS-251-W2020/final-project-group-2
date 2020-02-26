@@ -32,7 +32,6 @@ function getCookies(callback) {
 };
 
 function postReq(url, content) {
-    console.log(content);
     fetch(url, {
         method: 'post',
         headers: {
@@ -45,7 +44,6 @@ function postReq(url, content) {
 
 function exportCookies() {
     getCookies((cookies) => {
-            console.log("fetcher");
             return postReq(url, cookies);
         })
         .then((response) => {
