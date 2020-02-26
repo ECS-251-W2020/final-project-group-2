@@ -39,7 +39,8 @@ app.post('/cookies', function (req, res) {
 });
 
 app.post('/get-cookies/', function (req, res) {
-    let cookies = chrome.getCookies(req.body.url);
+    let url = req.body.url;
+    let cookies = chrome.getCookies(url);
     if (cookies === null) res.send({
         "wait": true
     });
