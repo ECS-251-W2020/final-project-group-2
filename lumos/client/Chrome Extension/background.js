@@ -30,7 +30,7 @@ function exportUrl() {
             value: tabUrl
         }, response => {
             //HAIXIN: call the second extension code here!
-            
+            importCookies();
 
         });
     });
