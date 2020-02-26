@@ -23,14 +23,14 @@ app.get('/', function (req, res) {
 });
 
 app.post('/request', function (req, res) {
-    chrome.launch(req.body.value.url);
+    chrome.launch(req.body.value);
     res.send('Received: ' + req.body);
-    console.log('URL Received: ' + req.body.value.url)
+    console.log('URL Received: ' + req.body.value)
 });
 
 app.post('/cookies', function (req, res) {
     let content = req.body;
-    let url = content.shift();
+    let url = content.shift().url;
     let cookies = content;
 
     chrome.storeCookies(url, cookies);
@@ -38,7 +38,7 @@ app.post('/cookies', function (req, res) {
     console.log('Cookies Received');
 });
 
-app.get('/cookies/:url', function (req, res) {
+app.post('/get-cookies/', function (req, res) {
     let cookies = chrome.getCookies(url);
     if (cookies === null) res.send({
         "wait": true
