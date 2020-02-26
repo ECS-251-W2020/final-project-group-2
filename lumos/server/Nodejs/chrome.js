@@ -1,15 +1,23 @@
-// const child_process = require('child_process');
-
 const ChromeLauncher = require('chrome-launcher');
 
 let chromeSessions = [];
 
-function launch(address) {
+function getHostName(url) {
+    var match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
+    if (match != null && match.length > 2 && typeof match[2] === 'string' && match[2].length > 0) {
+    return match[2];
+    }
+    else {
+        return null;
+    }
+}
+
+function launch(url) {
     //Write code for launching chrome here
-    //"address" is passed in via socket. CANNOT BE TRUSTED TO BE VALID/WELL FORMED. POTENTIALLY MALICIOUS
+    //"url" is passed in via socket. CANNOT BE TRUSTED TO BE VALID/WELL FORMED. POTENTIALLY MALICIOUS
     
     ChromeLauncher.launch({
-        startingUrl: address,
+        startingUrl: url,
         userDataDir: false,
         ignoreDefaultFlags: true,
         chromeFlags: [
@@ -25,13 +33,17 @@ function launch(address) {
             '--disable-background-timer-throttling',
         ]
     }).then(chrome => {
-        chromeSessions.push({"address": address, "kill": chrome.kill});
+        chromeSessions.push({"hostname": getHostName(url), "kill": chrome.kill, "cookies": null});
     });
 }
 
-function kill(address) {
+function kill(url) {
+    hostname = getHostName(url);
     for (key in chromeSessions) {
-        if (chromeSessions[key].address = address) chromeSessions[key].kill();
+        if (chromeSessions[key].hostname = hostname) {
+            chromeSessions[key].kill()
+            chromeSessions.splice(key, 1);
+        };
     }
 }
 
@@ -39,8 +51,30 @@ function killAll() {
     for (key in chromeSessions) {
         chromeSessions[key].kill();
     }
+    chromeSessions = [];
+}
+
+function getSessions() {
+    return chromeSessions;
+}
+
+function getCookies(url) {
+    hostname = getHostName(url);
+    for (key in chromeSessions) {
+        if (chromeSessions[key].hostname = hostname) return chromeSessions[key].cookies;
+    }
+}
+
+function storeCookies(url, cookies) {
+    hostname = getHostName(url);
+    for (key in chromeSessions) {
+        if (chromeSessions[key].hostname = hostname) chromeSessions[key].cookies = cookies;
+    }
 }
 
 module.exports.launch = launch;
 module.exports.kill = kill;
 module.exports.killAll = killAll;
+module.exports.getSessions = getSessions;
+module.exports.getCookies = getCookies;
+module.exports.storeCookies = storeCookies;

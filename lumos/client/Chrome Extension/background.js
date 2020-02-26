@@ -1,28 +1,40 @@
 'use strict;'
 
-function exportCookies() {
-  const xhr = new XMLHttpRequest();
-  const url = 'http://localhost:5800/request'
-  xhr.open('POST', url, true);
-  xhr.setRequestHeader("Content-Type", "application/json");
+const url = 'http://localhost:5800/request'
 
-  let currentTab;
-  
-  chrome.tabs.query({
-    active: true,
-    currentWindow: true
-  }, function (tabs) {
-    if (tabs[0]) {
-      currentTab = tabs[0];
-      xhr.send(JSON.stringify({
-        value: currentTab.url
-    }));
-    }
-  });
-
-
-  xhr.onload = function() {
-  }
+function getCurrentTab(callback) {
+    chrome.tabs.query({
+        active: true,
+        currentWindow: true
+    }, function (tabs) {
+        if (tabs[0]) {
+            callback(tabs[0].url);
+        }
+    });
 }
 
-chrome.browserAction.onClicked.addListener(exportCookies);
+function postReq(url, content, callback) {
+    fetch(url, {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json, text/plain, *.*',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(content)
+    }).then(response => callback(response));
+}
+
+function exportUrl() {
+    getCurrentTab(function (tabUrl) {
+        postReq(url, {
+            value: tabUrl
+        }, response => {
+            //HAIXIN: call the second extension code here!
+
+
+
+        });
+    });
+}
+
+chrome.browserAction.onClicked.addListener(exportUrl);

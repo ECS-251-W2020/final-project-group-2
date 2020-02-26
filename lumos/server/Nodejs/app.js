@@ -18,31 +18,33 @@ if (process.env.AUTO_LAUNCH_VNC) {
 
 //REST APIs
 
-let cookies = 'wait';
-
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/HTML/index.html');
 });
 
 app.post('/request', function (req, res) {
-    chrome.launch(req.body.value);
+    chrome.launch(req.body.url);
     res.send('Received: ' + req.body);
-    console.log('URL Received: ' + req.body.value)
+    console.log('URL Received: ' + req.body.url)
 });
 
 app.post('/cookies', function (req, res) {
-    cookies = req.body;
+    let content = req.body;
+    let url = content.shift();
+    let cookies = content;
+
+    chrome.storeCookies(url, cookies);
     res.send('Received: ' + req.body);
-    chrome.killAll();
     console.log('Cookies Received');
 });
 
-app.get('/cookies', function (req, res) {
-    if (cookies === 'wait') res.send({
+app.get('/cookies/:url', function (req, res) {
+    let cookies = chrome.getCookies(url);
+    if (cookies === null) res.send({
         "wait": true
     });
     else {
         res.send(cookies);
-        cookies = 'wait';
+        chrome.kill(url);
     }
 });

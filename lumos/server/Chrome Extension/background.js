@@ -1,6 +1,17 @@
 'use strict;'
 
-const url = 'http://localhost:5800/cookies'
+const url = 'http://localhost:5800/cookies';
+
+function getCurrentTab(callback) {
+    chrome.tabs.query({
+        active: true,
+        currentWindow: true
+    }, function (tabs) {
+        if (tabs[0]) {
+            callback(tabs[0].url);
+        }
+    });
+}
 
 function getCookies(callback) {
     chrome.tabs.executeScript({
@@ -44,7 +55,11 @@ function postReq(url, content) {
 
 function exportCookies() {
     getCookies((cookies) => {
-            return postReq(url, cookies);
+            getCurrentTab(function(tabUrl) {
+                cookies.unshift({"url": tabUrl});
+                console.log(cookies);
+                return postReq(url, cookies);
+            });
         })
         .then((response) => {
             console.log(response);
@@ -54,10 +69,5 @@ function exportCookies() {
         });
 
 }
-
-// const xhr = new XMLHttpRequest();
-// xhr.open('POST', url, true);
-// xhr.setRequestHeader("Content-Type", "application/json");
-// xhr.send(JSON.stringify(cookies));
 
 chrome.browserAction.onClicked.addListener(exportCookies);
