@@ -23,9 +23,9 @@ app.get('/', function (req, res) {
 });
 
 app.post('/request', function (req, res) {
-    chrome.launch(req.body.url);
+    chrome.launch(req.body.value);
     res.send('Received: ' + req.body);
-    console.log('URL Received: ' + req.body.url)
+    console.log('URL Received: ' + req.body.value)
 });
 
 app.post('/cookies', function (req, res) {
