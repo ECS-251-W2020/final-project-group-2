@@ -1,5 +1,6 @@
 {
     "env": {
-        "PORT": 5800
+        "PORT": 5800,
+        "AUTO_LAUNCH_VNC": false
     }
 }

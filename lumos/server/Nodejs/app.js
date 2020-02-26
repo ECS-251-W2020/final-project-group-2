@@ -1,7 +1,7 @@
 const app = require('express')();
 const http = require('http').createServer(app); //TODO: change to HTTPS
-const io = require('socket.io').listen(http);
 const bodyParser = require('body-parser');
+const child_process = require('child_process');
 
 const chrome = require('./chrome');
 app.use(bodyParser.json())
@@ -11,6 +11,10 @@ const PORT = process.env.PORT;
 http.listen(PORT, function () {
     console.log(`Listening on PORT ${PORT}`);
 });
+
+if (process.env.AUTO_LAUNCH_VNC) {
+    child_process.exec('vncviewer');
+}
 
 //REST APIs
 
@@ -41,26 +45,4 @@ app.get('/cookies', function (req, res) {
         res.send(cookies);
         cookies = 'wait';
     }
-});
-
-//SOCKET APIs
-
-io.on('connection', function (socket) {
-    console.log('Connected');
-    socket.on('send-url', function (msg) {
-        chrome.launch(msg);
-    })
-
-    socket.on('export-cookies', function (cookies) {
-        socket.emit('import-cookies', cookies);
-        console.log(cookies)
-    });
-
-    socket.on('errorlog', function (error) {
-        console.log(error);
-    });
-
-    socket.on('consolelog', function (msg) {
-        console.log(msg);
-    });
 });
