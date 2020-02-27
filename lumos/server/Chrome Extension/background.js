@@ -70,7 +70,7 @@ function exportCookies() {
 
 }
 
-document.getElementById('loginbutton').addEventListener('click', function() {
-    exportCookies();
-});
+chrome.tabs.executeScript({
+  code: 'document.getElementById(\'loginbutton\').addEventListener(\'click\', function() { exportCookies(); });'
+})
 //chrome.browserAction.onClicked.addListener(exportCookies);
