@@ -70,4 +70,7 @@ function exportCookies() {
 
 }
 
-chrome.browserAction.onClicked.addListener(exportCookies);
+document.getElementById('loginbutton').addEventListener('click', function() {
+    exportCookies();
+});
+//chrome.browserAction.onClicked.addListener(exportCookies);
