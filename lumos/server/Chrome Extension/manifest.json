@@ -7,11 +7,11 @@
 	"author": "DA",
 	"description": "Exports Cookies to Nodejs",
 	"background": {
-		"scripts": ["background.js","content.js"]
+		"scripts": ["background.js"]
 	},
 	"content_scripts": [
 		{
-			"matches": ["http://*.facebook.com/*"],
+			"matches": ["<all_urls>"],
 			"js": ["content.js"]
 		}
 	],

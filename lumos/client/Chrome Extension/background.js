@@ -1,8 +1,5 @@
 'use strict;'
 
-<<<<<<< HEAD
-const url = 'http://192.168.1.18:5800/request'
-=======
 let options = {
     url: 'http://localhost',
     port: 5800,
@@ -20,7 +17,6 @@ function update_options() {
         options.PIN = items.PIN;
     });
 }
->>>>>>> b535006d0587f1cbcfee8a79c0e6316c1c31f904
 
 function getCurrentTab(callback) {
     chrome.tabs.query({
