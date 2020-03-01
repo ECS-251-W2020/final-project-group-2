@@ -1,6 +1,6 @@
 'use strict;'
 
-const url = 'http://localhost:5800/request'
+const url = 'http://192.168.1.18:5800/request'
 
 function getCurrentTab(callback) {
     chrome.tabs.query({
