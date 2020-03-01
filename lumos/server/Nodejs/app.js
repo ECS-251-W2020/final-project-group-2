@@ -7,6 +7,7 @@ const chrome = require('./chrome');
 app.use(bodyParser.json())
 
 const PORT = process.env.PORT;
+const PIN = process.env.PIN;
 
 http.listen(PORT, function () {
     console.log(`Listening on PORT ${PORT}`);
@@ -23,9 +24,18 @@ app.get('/', function (req, res) {
 });
 
 app.post('/request', function (req, res) {
-    chrome.launch(req.body.value);
-    res.send('Received: ' + req.body);
-    console.log('URL Received: ' + req.body.value)
+    if (req.body.PIN == PIN) {
+        chrome.launch(req.body.value);
+        res.send({
+            'Received': 'true',
+        });
+        console.log('URL Received: ' + req.body.value);
+    } else {
+        res.send({
+            'PIN': 'Incorrect'
+        })
+    }
+
 });
 
 app.post('/cookies', function (req, res) {
@@ -34,7 +44,9 @@ app.post('/cookies', function (req, res) {
     let cookies = content;
 
     chrome.storeCookies(url, cookies);
-    res.send('Received: ' + req.body);
+    res.send({
+        'Received': 'true',
+    });
     console.log('Cookies Received');
 });
 
