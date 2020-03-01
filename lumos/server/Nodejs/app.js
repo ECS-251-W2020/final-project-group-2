@@ -1,5 +1,25 @@
 const app = require('express')();
-const http = require('http').createServer(app); //TODO: change to HTTPS
+
+// Enable HTTPS to replace the line below
+// const http = require('http').createServer(app); 
+
+const fs = require('fs');
+const https = require('https');
+
+
+let key = fs.readFileSync(process.env.TLS_PRIVATE_KEY);
+let cert = fs.readFileSync(process.env.TLS_CERTIFICATE);
+
+
+let options = {
+    key: key,
+    cert: cert
+}
+
+let http = https.createServer(options, app);
+
+
+
 const bodyParser = require('body-parser');
 const child_process = require('child_process');
 

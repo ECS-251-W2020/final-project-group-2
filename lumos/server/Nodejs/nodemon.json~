@@ -2,6 +2,8 @@
     "env": {
         "PORT": 5800,
         "AUTO_LAUNCH_VNC": false,
-        "PIN": 1234
+        "PIN": 1234,
+        "TLS_PRIVATE_KEY": "privateKey.key",
+        "TLS_CERTIFICATE": "certificate.crt"
     }
 }
