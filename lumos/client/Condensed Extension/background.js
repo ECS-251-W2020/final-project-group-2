@@ -66,28 +66,31 @@ let saveCookie = function (cookie, url) {
     });
 }
 
-let sendCookies = function(cookies) {
-     for( ;cookies.wait === true; ){
-        sendCookies(cookies);
-     }
-     else {
-            cookies.forEach(cookie => {
-            // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
-            // current user is using custom containers
-            // cookie.storeId = tabUrl.cookieStoreId;
-
-            saveCookie(cookie, tab.url);
-        });
-        chrome.tabs.executeScript(tab.id, {code: 'window.location.reload();'});
-    }
-}
-
 function importCookies() {
     getCurrentTab(function (tab) {
-        postReq(url, {
-            url: tab.url
-        }, sendCookies(cookies));
-    });
+        for( let i = 0; i < 60 ;  i ++){
+        	setTimeout(function() {
+        		postReq(url, {
+            	url: tab.url
+        		}, function(cookies) {
+                   if (cookies.wait === true);
+                
+                   else {
+                      cookies.forEach(cookie => {
+                      // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
+                      // current user is using custom containers
+                      // cookie.storeId = tabUrl.cookieStoreId;
+                     
+
+                      saveCookie(cookie, tab.url);
+                   });
+                   chrome.tabs.executeScript(tab.id, {code: 'window.location.reload();'});
+                   break();
+                   }
+                }); 
+            }, 500)
+    	}
+     });
 }
 
 chrome.browserAction.onClicked.addListener(exportUrl);
