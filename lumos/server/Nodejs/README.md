@@ -5,3 +5,6 @@ Steps to get Lumos Server running
 3. Copy `nodemon.json~` (it may be hidden by the file browser) to `nodemon.json` and update variables
 4. If running Linux, go into `node_modules/chrome-launcher/dist/chrome-launcher.js` and search for `--disable-setuid-sandbox`. Remove the section setting this flag.
 5. Run `npm test`
+
+
+Openssl command to generate keys: `openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt`
