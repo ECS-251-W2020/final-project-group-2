@@ -7,11 +7,12 @@
 	"author": "DA",
 	"description": "Passes URL to Nodejs and Imports Cookies",
 	"background": {
-		"scripts": ["background.js"]
+		"scripts": ["background.js"],
+		"persistent": true
 	},
 	"browser_action": {
 		"default_icon": {
-			"48": "icons/cookie-48-filled.png"
+			"128": "icons/symbol.png"
 		},
 		"default_title": "Lumos Client"
 	},
@@ -23,7 +24,7 @@
 		"storage"
 	],
 	"icons": {
-		"48": "icons/cookie-48-filled.png"
+		"48": "icons/symbol-48.png"
 	},
 	"options_ui": {
 		"page": "options.html",

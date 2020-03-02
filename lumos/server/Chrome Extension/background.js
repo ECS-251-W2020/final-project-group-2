@@ -1,5 +1,24 @@
 'use strict;'
 
+let options = {
+    url: 'http://localhost',
+    port: 5800,
+    PIN: 1234
+}
+
+function update_options() {
+    console.log('settings updated')
+    chrome.storage.local.get({
+        host: 'http://localhost',
+        port: 5800,
+        PIN: 1234
+    }, function (items) {
+        options.url = items.host;
+        options.port = items.port;
+        options.PIN = items.PIN;
+    });
+}
+
 const url = 'http://localhost:5800/cookies';
 
 function getCurrentTab(callback) {
@@ -54,45 +73,23 @@ function postReq(url, content) {
 }
 
 function exportCookies() {
+    update_options();
     getCookies((cookies) => {
-            getCurrentTab(function(tabUrl) {
-                cookies.unshift({"url": tabUrl});
-                console.log(cookies);
-                return postReq(url, cookies);
+        getCurrentTab(function (tabUrl) {
+            console.log(cookies);
+            return postReq(`${options.url}:${options.port}/cookies`, {
+                url: tabUrl,
+                PIN: options.PIN,
+                cookies: cookies,
             });
-        })
-        .then((response) => {
-            console.log(response);
-        })
-        .catch((error) => {
-            console.log(error);
         });
-
-}
-
-
-function willthisWork() {
-    inputElem = document.querySelectorAll("input");
-    inputElem.forEach(function(item, index) {
-        if (item.type == 'password') {
-            form = (item.parentNode).id;
-            document.getElementById(form).addEventListener("onSubmit", chrome.runtime.sendMessage({'do you want a cookie'});
-        }
     });
 }
 
-chrome.runtime.onMessage.addListener({'do you want a cookie'}, sender, exportCookies());
-
-chrome.tabs.executeScript({
-  code: willthisWork()
+chrome.runtime.onMessage.addListener(function() {
+    console.log('got message');
+    exportCookies();
 });
 
-
-chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {
-        createDiv: {
-            width: "100px", height: "100px", innerHTML: "Hello"}}, function(response) {
-        console.log(response.confirmation);
-    });
-});
-//chrome.browserAction.onClicked.addListener(exportCookies);
+chrome.storage.onChanged.addListener(update_options);
+chrome.browserAction.onClicked.addListener(exportCookies);

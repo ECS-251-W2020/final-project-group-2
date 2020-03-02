@@ -2,12 +2,16 @@ const app = require('express')();
 const bodyParser = require('body-parser');
 const child_process = require('child_process');
 const fs = require('fs');
+const chrome = require('./chrome');
+
+const PORT = process.env.PORT;
+const PIN = process.env.PIN;
+
+app.use(bodyParser.json())
 
 let http;
 
-if (process.env.USE_HTTPS) {
-    const https = require('https');
-
+if (process.env.USE_HTTPS === 'true') {
     let key = fs.readFileSync(process.env.TLS_PRIVATE_KEY);
     let cert = fs.readFileSync(process.env.TLS_CERTIFICATE);
 
@@ -16,16 +20,10 @@ if (process.env.USE_HTTPS) {
         cert: cert,
     }
 
-    http = https.createServer(options, app);
+    http = require('https').createServer(options, app);
 } else {
     http = require('http').createServer(app);
 }
-
-const chrome = require('./chrome');
-app.use(bodyParser.json())
-
-const PORT = process.env.PORT;
-const PIN = process.env.PIN;
 
 http.listen(PORT, function () {
     console.log(`Listening on PORT ${PORT}`);
@@ -49,33 +47,51 @@ app.post('/request', function (req, res) {
         });
         console.log('URL Received: ' + req.body.value);
     } else {
+        console.log('Incorrect PIN!');
         res.send({
             'PIN': 'Incorrect',
-        })
+        });
     }
 
 });
 
 app.post('/cookies', function (req, res) {
-    let content = req.body;
-    let url = content.shift().url;
-    let cookies = content;
+    if (req.body.PIN == PIN) {
+        let content = req.body;
+        let url = content.url;
+        let cookies = content.cookies;
 
-    chrome.storeCookies(url, cookies);
-    res.send({
-        'Received': 'true',
-    });
-    console.log('Cookies Received');
+        chrome.storeCookies(url, cookies);
+        res.send({
+            'Received': 'true',
+        });
+        console.log('Cookies Received');
+    } else {
+        console.log('Incorrect PIN!');
+        res.send({
+            'PIN': 'Incorrect',
+        });
+    }
 });
 
-app.post('/get-cookies/', function (req, res) {
-    let url = req.body.url;
-    let cookies = chrome.getCookies(url);
-    if (cookies === null) res.send({
-        "wait": true
-    });
-    else {
-        res.send(cookies);
-        chrome.kill(url);
+app.post('/get-cookies', function (req, res) {
+    if (req.body.PIN == PIN) {
+        let url = req.body.url;
+        let cookies = chrome.getCookies(url);
+        if (cookies === undefined) {
+            res.send({
+                wait: true,
+            });
+        }
+        // if (cookies === null) res.send('test');
+        else {
+            res.send(cookies);
+            chrome.kill(url);
+        }
+    } else {
+        console.log('Incorrect PIN!');
+        res.send({
+            'PIN': 'Incorrect',
+        });
     }
 });
