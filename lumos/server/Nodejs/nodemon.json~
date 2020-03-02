@@ -3,6 +3,7 @@
         "PORT": 5800,
         "AUTO_LAUNCH_VNC": false,
         "PIN": 1234,
+        "USE_HTTPS": false,
         "TLS_PRIVATE_KEY": "privateKey.key",
         "TLS_CERTIFICATE": "certificate.crt"
     }

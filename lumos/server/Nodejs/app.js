@@ -1,27 +1,25 @@
 const app = require('express')();
-
-// Enable HTTPS to replace the line below
-// const http = require('http').createServer(app); 
-
-const fs = require('fs');
-const https = require('https');
-
-
-let key = fs.readFileSync(process.env.TLS_PRIVATE_KEY);
-let cert = fs.readFileSync(process.env.TLS_CERTIFICATE);
-
-
-let options = {
-    key: key,
-    cert: cert
-}
-
-let http = https.createServer(options, app);
-
-
-
 const bodyParser = require('body-parser');
 const child_process = require('child_process');
+const fs = require('fs');
+
+let http;
+
+if (process.env.USE_HTTPS) {
+    const https = require('https');
+
+    let key = fs.readFileSync(process.env.TLS_PRIVATE_KEY);
+    let cert = fs.readFileSync(process.env.TLS_CERTIFICATE);
+
+    let options = {
+        key: key,
+        cert: cert,
+    }
+
+    http = https.createServer(options, app);
+} else {
+    http = require('http').createServer(app);
+}
 
 const chrome = require('./chrome');
 app.use(bodyParser.json())
@@ -52,7 +50,7 @@ app.post('/request', function (req, res) {
         console.log('URL Received: ' + req.body.value);
     } else {
         res.send({
-            'PIN': 'Incorrect'
+            'PIN': 'Incorrect',
         })
     }
 
