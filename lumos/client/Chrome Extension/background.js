@@ -78,7 +78,7 @@ function requestCookies(tab) {
         if (cookies.wait === true) console.log('Waiting');
         else {
             cookies.forEach(cookie => {
-                cookie.storeId = tabUrl.cookieStoreId;
+                cookie.storeId = tab.cookieStoreId;
                 saveCookie(cookie, tab.url);
             });
             chrome.tabs.executeScript(tab.id, {
@@ -95,6 +95,7 @@ function importCookies() {
         }, 500);
         setTimeout(function() {
             clearInterval(pollServer);
+            pollServer = 0;
         }, 1000 * 30);
     });
 }
