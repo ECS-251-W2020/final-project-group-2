@@ -78,12 +78,11 @@ app.post('/get-cookies', function (req, res) {
     if (req.body.PIN == PIN) {
         let url = req.body.url;
         let cookies = chrome.getCookies(url);
-        if (cookies === undefined) {
+        if (cookies === undefined || cookies === null) {
             res.send({
                 wait: true,
             });
         }
-        // if (cookies === null) res.send('test');
         else {
             res.send(cookies);
             chrome.kill(url);
