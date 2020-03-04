@@ -19,8 +19,6 @@ function update_options() {
     });
 }
 
-const url = 'http://localhost:5800/cookies';
-
 function getCurrentTab(callback) {
     chrome.tabs.query({
         active: true,
