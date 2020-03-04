@@ -86,7 +86,9 @@ function exportCookies() {
 
 chrome.runtime.onMessage.addListener(function() {
     console.log('got message');
-    exportCookies();
+    setTimeout(function() {
+        exportCookies();
+    }, 1000);
 });
 
 chrome.storage.onChanged.addListener(update_options);
