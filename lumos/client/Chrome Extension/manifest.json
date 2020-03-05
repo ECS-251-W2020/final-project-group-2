@@ -7,8 +7,7 @@
 	"author": "DA",
 	"description": "Passes URL to Nodejs and Imports Cookies",
 	"background": {
-		"scripts": ["background.js"],
-		"persistent": false
+		"scripts": ["background.js"]
 	},
 	"browser_action": {
 		"default_icon": {
