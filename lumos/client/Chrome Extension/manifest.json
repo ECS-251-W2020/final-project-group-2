@@ -8,7 +8,7 @@
 	"description": "Passes URL to Nodejs and Imports Cookies",
 	"background": {
 		"scripts": ["background.js"],
-		"persistent": true
+		"persistent": false
 	},
 	"browser_action": {
 		"default_icon": {
