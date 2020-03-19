@@ -6,7 +6,7 @@ The Lumos Project is divided into 2 parts:
 <li>Client</li>
 </ul>
 
-The Server components (in the server folder) are to be install on the Thin Client, while the Client components (in the client folder) are to be installed on the Host. (Terms thin client and host as described in the PPT).
+The Server components (in the server folder) are to be install on the Thin Client, while the Client components (in the client folder) are to be installed on the Host. (Terms thin client and host as described in the PPT). The server components are made up of a Chrome Extension and a Nodejs server for responding to requests made by the Chrome extensions. The client only has one component, another Chrome Extension.
 
 To install the Chrome extensions:
 <ol>
