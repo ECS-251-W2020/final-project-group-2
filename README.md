@@ -15,13 +15,13 @@ To install the Chrome extensions:
 <li>Click the "Load Unpacked" button and select the "Chrome Extension" folder for client or server respectively</li>
 </ol>
 
-Chrome extension configuration:
+Chrome extension configuration:<br>
 On the host computer, right click on the Lumos icon and select "options". Enter the IP address of the Host computer. Make sure to use HTTP:// or HTTPS:// as configured in Lumos Server, as well as the correct PIN and ports.
 
-Running Lumos Server:
+Running Lumos Server:<br>
 Navigate to lumos/server/Nodejs and follow the README.md file in that folder.
 
-Additional 3rd Party software to be installed:
+Additional 3rd Party software to be installed: <br>
 Thin client:
 <ul>
 <li>Chrome</li>
